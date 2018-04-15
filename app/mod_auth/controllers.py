@@ -35,11 +35,10 @@ def signin():
 
             session['user_id'] = user.id
 
-            flash('Welcome %s' % user.name)
+            flash('Welcome %s !! You are logged in!' % user.name, 'error')
 
-            return redirect(url_for('auth.home'))
-
-        flash('Wrong email or password', 'error')
+        else:
+            flash('Wrong email or password', 'error')
 
     return render_template("auth/signin.html", form=form)
 
@@ -60,6 +59,6 @@ def signup():
         user = User(name, email, password)
         db_session.add(user)
         db_session.commit()
-        flash('readed: ' + email + ' ' + name + ' ' + password, 'error')
+        return redirect("auth/signin")
 
     return render_template("auth/signup.html", form=form)
