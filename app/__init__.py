@@ -1,11 +1,19 @@
 # Import flask and template operators
-from flask import Flask, render_template
+import os
+from flask import Flask, render_template, send_from_directory
 
 # Define the WSGI application object
 app = Flask(__name__)
 
 # Configurations
 app.config.from_object('config')
+
+
+# Browser static (os) favicon
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 # Sample HTTP error handling
