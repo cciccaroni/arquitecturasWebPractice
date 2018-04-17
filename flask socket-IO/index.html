@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<title>Chat Room</title>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	</head>
+	<body>
+		<script type="text/javascript">
+		$(document).ready(function() {
+
+			var socket;
+
+			$('#sendUserButton').on('click', function() {
+				var socket = io.connect('http://127.0.0.1:5000');
+
+				socket.on('connect', function() {
+					socket.emit('new user', {
+												"name": $('#userName').val()
+											 });
+				});
+
+				$('#userDiv').hide();
+				$('#messageDiv').show();
+				$('#loggedUser').text('Logged user is ' + $('#userName').val());
+
+				//handler del evento recibir un nuevo mensaje
+				socket.on('message', function(msg) {
+					var from = $.parseJSON(msg.replace(/\'/g, '\"')).from;
+					var message = $.parseJSON(msg.replace(/\'/g, '\"')).message;
+					$("#messages").append('<li>' + from + ': ' + message + '</li>');
+					console.log('Received message');
+				});
+
+				//handler del evento "new user"
+				socket.on('new user', function(users) {
+					$('#users').empty()
+					$.each(users, function (index,value) {
+						  $('#users').append($('<option>', {
+									value: value,
+									text: value
+								}))
+					});
+				});
+
+				//mandar un mensaje
+				$('#sendbutton').on('click', function() {
+					socket.emit('new message', {
+												'from': $('#userName').val(),
+												'to': $('#users').val(),
+												'message': $('#myMessage').val(),
+											 });
+					$('#myMessage').val('');
+				});
+
+			});
+
+		});
+
+		</script>
+		<ul id="messages"></ul>
+
+		<div id="userDiv">
+			UserName:
+			<input type="text" id="userName">
+			<button id="sendUserButton">Log in</button>
+		</div>
+
+		<div id="loggedUser"></div>
+
+
+		<div id="messageDiv" style="display:none;">
+			Message:
+			<input type="text" id="myMessage">
+			<button id="sendbutton">Send to: </button>
+			<select id="users"></select>
+
+		</div>
+
+	</body>
+</html>
