@@ -10,7 +10,7 @@ app.config.from_object('config')
 
 
 # Browser static (os) favicon
-@app.route('/favicon.ico')
+@app.route('/img/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
@@ -20,15 +20,6 @@ def favicon():
 @app.errorhandler(404)
 def not_found(error):
     return render_template('auth/404.html'), 404
-
-
-#data base connection session teadown
-from app.mod_database import db_session
-
-
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db_session.remove()
 
 
 #init db

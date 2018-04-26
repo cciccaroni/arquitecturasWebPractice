@@ -12,7 +12,7 @@ from app.mod_auth.models import User
 #to decode form data
 import unicodedata
 
-from app.mod_database import db_session
+from app.mod_database import db
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -57,8 +57,8 @@ def signup():
         name = unicodedata.normalize('NFKD', form.name.data).encode('ascii', 'ignore')
         password = unicodedata.normalize('NFKD', form.password.data).encode('ascii', 'ignore')
         user = User(name, email, password)
-        db_session.add(user)
-        db_session.commit()
+        db.session.add(user)
+        db.session.commit()
         return redirect("auth/signin")
 
     return render_template("auth/signup.html", form=form)
