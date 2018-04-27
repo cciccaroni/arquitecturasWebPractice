@@ -28,12 +28,13 @@ def signin():
 
     # Verify the sign in form
     if form.validate_on_submit():
+        user = User.query.filter(User.email == form.email.data.encode()).first()
 
-        user = User.query.filter(User.email == form.email.data).first()
-
-        if user and user.password == form.password.data:
+        if user and user.password == form.password.data.encode():
 
             session['user_id'] = user.id
+
+            return redirect("index/")
 
             flash('Welcome %s !! You are logged in!' % user.name, 'error')
 
@@ -62,3 +63,8 @@ def signup():
         return redirect("auth/signin")
 
     return render_template("auth/signup.html", form=form)
+
+@mod_auth.route('/logout/', methods=['GET', 'POST'])
+def logout():
+    session['user_id'] = 0;
+    return 'logged out'

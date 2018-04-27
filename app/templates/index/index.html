@@ -1,0 +1,23 @@
+{% macro conversationMacro(id, title, messages) -%}
+    <p>{{ id }}</p>
+    <p>{{ title }}</p>
+    {% for message in messages %}
+    <div>
+      <span>{{ message.message.text }}</span>
+    </div>
+    {% endfor %}
+{%- endmacro %}
+
+<html>
+    <head>
+    </head>
+    <body>
+        {% for conversation in conversations %}
+        <div>
+           {{ conversationMacro(conversation.id, conversation.title, conversation.messages) }}
+        </div>
+        {% endfor %}
+    </body>
+</html>
+
+
