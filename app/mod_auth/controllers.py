@@ -7,7 +7,7 @@ from flask import Blueprint, request, render_template, \
 from app.mod_auth.forms import LoginForm, SignUpForm
 
 # Import module models (i.e. User)
-from app.mod_auth.models import User
+from app.appModel.models import User
 
 #to decode form data
 import unicodedata
