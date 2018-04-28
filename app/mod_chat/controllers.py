@@ -1,19 +1,17 @@
-from flask import Blueprint, session, render_template, request
-from werkzeug.utils import redirect
+from flask import Blueprint, request, session, render_template
 
-from app import mod_index
-from app.appModel.models import User
-from app.mod_database import db
+from app.appModel.models import Conversation, User
 
-mod_chat = Blueprint('chat', __name__)
+mod_chat = Blueprint('chat', __name__, url_prefix= "/chat")
 
-@mod_chat.route('/', methods=['GET', 'POST'])
-def chat():
-    if request.method == 'GET':
-        if session.get('user_id'):
-            return render_template("bootstrap_prueba/bootstrap.html", users=User.query.all())
-        else:
-            return redirect("auth/signin")
-    else:
-        return 'ok'
+@mod_chat.route('/<user_id>', methods=['GET'])
+def chat(user_id):
+    actual_user = User.query.filter(User.id == session['user_id']).first()
+    adressee_user = User.query.filter(User.id == user_id).first()
+    if(not actual_user.conversations):
+        conversation = Conversation()
+        actual_user.addConversation(conversation)
+        adressee_user.addConversation(conversation)
 
+
+    return render_template("chat/chat.html", room='gus genio')

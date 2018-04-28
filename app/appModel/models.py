@@ -27,6 +27,9 @@ class User(db.Model):
         self.email    = email
         self.password = password
 
+    def addConversation(self, conversation):
+        self.conversations.append(conversation)
+
     def __repr__(self):
         return '<User %r>' % (self.name)
 
