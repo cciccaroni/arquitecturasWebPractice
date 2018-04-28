@@ -34,7 +34,7 @@ def signin():
 
             session['user_id'] = user.id
 
-            return redirect("index/")
+            return redirect("/")
 
             flash('Welcome %s !! You are logged in!' % user.name, 'error')
 
