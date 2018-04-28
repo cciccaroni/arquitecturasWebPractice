@@ -12,7 +12,7 @@ def index():
         return redirect("auth/signin")
 
     #de alguna forma llamar a la base y llenar este json
-    user = {'username': 'Miguel'}
+    user = {'username': '' + session['user_name'].decode() + '' }
     conversations = [
         {
             'id': 1,
