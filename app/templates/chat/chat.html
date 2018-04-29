@@ -4,30 +4,22 @@
             <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
         <script type="text/javascript" charset="utf-8">
-            var socket;
-            $(document).ready(function(){
+            let socket;
+            $(document).ready(() => {
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat/');
-
-                socket.on('updateUiWithTextMessage', function(data) {
+                socket.on('updateUiWithTextMessage', data => {
                     $('#chat').val($('#chat').val() + data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
-                $('#text').keypress(function(e) {
-                    var code = e.keyCode || e.which;
+                $('#text').keypress(e => {
+                    const code = e.keyCode || e.which;
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
                         socket.emit('textMessage', (text, adressee.id));
                     }
                 });
-            });
-        </script>
-
-        <script type="text/javascript" charset="utf-8">
-            $(document).ready(function(){
-                for
-                $('#chat').append($(this).text());
             });
         </script>
     </head>

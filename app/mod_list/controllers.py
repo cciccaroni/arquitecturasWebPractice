@@ -11,9 +11,10 @@ mod_list = Blueprint('list', __name__)
 
 @mod_list.route('/', methods=['GET'])
 def chat():
-    if session.get('user_id'):
-        #me uno a mi sala
-        join_room(session.get('user_id'))
-        return render_template("bootstrap_prueba/bootstrap.html", users=User.query.all(), text="1")
+    user_id = session.get('user_id', None)
+    if user_id:
+        return render_template("bootstrap_prueba/bootstrap.html", 
+                                users=User.query.all(), 
+                                user=user_id, text="1")
     
     return redirect("auth/signin")
