@@ -1,21 +1,23 @@
 <html>
     <head>
         <title>{{ adressee.name }}</title>
-            <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script type="text/javascript" charset="utf-8">
             var socket;
             $(document).ready(function(){
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+                //socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+                socket = io.connect('http://127.0.0.1:5000');
+
                 socket.on('connect', function() {
-                    socket.emit('joined', {});
+                    socket.emit('joined', '{{actualUser.name.decode()}}');
                 });
                 socket.on('status', function(data) {
                     $('#chat').val($('#chat').val() + '<' + data.msg + '>\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
                 socket.on('message', function(data) {
-                    $('#chat').val($('#chat').val() + data.msg + '\n');
+                    $('#chat').val($('#chat').val() + $.parseJSON(data.replace(/\'/g, '\"')).msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
                 $('#text').keypress(function(e) {
@@ -23,7 +25,7 @@
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('text', {msg: text});
+                        socket.emit('text', {'msg': text, 'to': '{{adressee.name.decode()}}'});
                     }
                 });
             });
@@ -31,8 +33,7 @@
 
         <script type="text/javascript" charset="utf-8">
             $(document).ready(function(){
-                for
-                $('#chat').append($(this).text());
+                //$('#chat').append($(this).text());
             });
         </script>
     </head>

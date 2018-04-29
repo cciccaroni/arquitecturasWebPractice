@@ -66,5 +66,5 @@ def signup():
 
 @mod_auth.route('/logout/', methods=['GET', 'POST'])
 def logout():
-    session['user_id'] = 0;
+    session.clear();
     return 'logged out'

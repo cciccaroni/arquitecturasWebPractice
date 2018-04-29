@@ -15,4 +15,4 @@ def chat(user_id):
         adressee_user.addConversation(conversation)
 
 
-    return render_template("chat/chat.html", adressee=adressee_user)
+    return render_template("chat/chat.html", adressee=adressee_user, actualUser = actual_user)
