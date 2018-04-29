@@ -1,6 +1,7 @@
 from flask import Blueprint, request, session, render_template
 
 from app.appModel.models import Conversation, User
+from app.mod_database import db
 
 mod_chat = Blueprint('chat', __name__, url_prefix="/chat")
 
