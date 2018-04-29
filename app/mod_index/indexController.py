@@ -8,7 +8,7 @@ mod_index = Blueprint('index', __name__, url_prefix='/index')
 
 @mod_index.route('/', methods=['GET'])
 def index():
-    if not 'user_id' in session or session['user_id'] == 0:
+    if not 'user_id' in session:
         return redirect("auth/signin")
 
     #de alguna forma llamar a la base y llenar este json

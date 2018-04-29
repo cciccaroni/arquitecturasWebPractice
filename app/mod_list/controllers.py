@@ -15,10 +15,5 @@ def chat():
         #me uno a mi sala
         join_room(session.get('user_id'))
         return render_template("bootstrap_prueba/bootstrap.html", users=User.query.all(), text="1")
-    else:
-        return redirect("auth/signin")
-
-
-
-
-
+    
+    return redirect("auth/signin")
