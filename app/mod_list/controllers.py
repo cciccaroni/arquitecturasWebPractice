@@ -13,7 +13,7 @@ mod_list = Blueprint('list', __name__)
 def chat():
     user_id = session.get('user_id', None)
     if user_id:
-        return render_template("bootstrap_prueba/bootstrap.html", 
+        return render_template("contacts/list.html", 
                                 users=User.query.all(), 
                                 user=user_id, text="1")
     
