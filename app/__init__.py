@@ -2,12 +2,12 @@
 import os
 from flask import Flask, render_template, send_from_directory
 
+
 # Define the WSGI application object
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
-socketio = SocketIO(app)
-
+socketio = SocketIO(app, engineio_logger=True)
 
 # Configurations
 app.config.from_object('config')

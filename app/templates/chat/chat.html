@@ -6,7 +6,12 @@
         <script type="text/javascript" charset="utf-8">
             var socket;
             $(document).ready(function(){
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat/');
+
+                socket = io.connect('http://' + location.host + '/chat');
+
+                socket.on('connect', function() {
+                    socket.emit('joinMe', {});
+                });
 
                 socket.on('updateUiWithTextMessage', function(data) {
                     $('#chat').val($('#chat').val() + data.msg + '\n');
@@ -18,7 +23,8 @@
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('textMessage', (text, adressee.id));
+                        socket.emit('textMessage', {msg : text});
+
                     }
                 });
             });
