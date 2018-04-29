@@ -31,12 +31,8 @@ def signin():
         user = User.query.filter(User.email == form.email.data.encode()).first()
 
         if user and user.password == form.password.data.encode():
-
             session['user_id'] = user.id
-
             return redirect("/")
-
-            flash('Welcome %s !! You are logged in!' % user.name, 'error')
 
         else:
             flash('Wrong email or password', 'error')
@@ -60,11 +56,14 @@ def signup():
         user = User(name, email, password)
         db.session.add(user)
         db.session.commit()
-        return redirect("auth/signin")
+
+        session['user_id'] = user.id
+
+        return redirect("/")
 
     return render_template("auth/signup.html", form=form)
 
 @mod_auth.route('/logout/', methods=['GET', 'POST'])
 def logout():
-    session['user_id'] = 0;
+    session.pop('user_id', None)
     return 'logged out'

@@ -1,3 +1,6 @@
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
 {% macro render_field(field, placeholder=None) %}
 {% if field.errors %}
 <div>
@@ -12,8 +15,8 @@
 {% endmacro %}
 
 <div>
-  <div>
-    <legend>Sign in</legend>
+  <div class="box">
+      <h1>Sign in</h1>
     {% with errors = get_flashed_messages(category_filter=["error"]) %}
     {% if errors %}
     <div>
@@ -36,15 +39,21 @@
     <form method="POST" action="." accept-charset="UTF-8" role="form">
       {{ form.csrf_token }}
       {{ render_field(form.email, placeholder="Your Email Address",
-                                  autofocus="") }}
-      {{ render_field(form.password, placeholder="Password") }}
+                                  autofocus="", class="signin") }}
+      {{ render_field(form.password, placeholder="Password",
+                                  autofocus="", class="signin") }}
+      
       <div>
       <label>
         <input type="checkbox" name="remember" value="1"> Remember Me
       </label>
-      <a role="button" href="">Forgot your password?</a><span class="clearfix"></span>
       </div>
-      <button type="submit" name="submit">Sign in</button>
+      <button type="submit" class="btn" name="submit">Sign in</button>
+      <button type=button onclick="location.href='/auth/signup'" id="btn2">Sign Up</button>
+      <a href="#" onclick='forgotPassword()'><font size="2" style="color:#f1c40f;">Forgot your password?</font></a><span class="clearfix"></span>
     </form>
   </div>
 </div>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> -->
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/auth.js') }}" defer></script>
