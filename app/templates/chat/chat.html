@@ -17,7 +17,8 @@
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('textMessage', (text, adressee.id));
+                        socket.emit('textMessage', {msg : text});
+
                     }
                 });
             });

@@ -1,10 +1,10 @@
 from flask import Blueprint, session, render_template, request
-from flask_socketio import join_room
 from werkzeug.utils import redirect
 
-from app import mod_index
+from app import socketio
 from app.appModel.models import User
-from app.mod_database import db
+from flask_socketio import emit, join_room
+
 
 mod_list = Blueprint('list', __name__)
 

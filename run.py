@@ -1,4 +1,6 @@
 # Run a test server.
+from flask_socketio import SocketIO
+
 from app import app, socketio
 
 socketio.init_app(app)
