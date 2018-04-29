@@ -1,3 +1,6 @@
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/auth.css') }}">
+</head>
 {% macro render_field(field, placeholder=None) %}
 {% if field.errors %}
 <div>
@@ -12,8 +15,8 @@
 {% endmacro %}
 
 <div>
-  <div>
-    <legend>Sign up!</legend>
+  <div class="box">
+    <h1>Sign up!</h1>
     {% with errors = get_flashed_messages(category_filter=["error"]) %}
     {% if errors %}
     <div>
@@ -33,12 +36,13 @@
     {% endfor %}
     </div>
     {% endif %}
-    <form method="POST" action="." accept-charset="UTF-8" role="form">
+    <form class="form-signup" method="POST" action="." accept-charset="UTF-8" role="form">
       {{ form.csrf_token }}
-      {{ render_field(form.name, placeholder="Your Name", autofocus="") }}
-	  {{ render_field(form.email, placeholder="Your Email Address") }}
-      {{ render_field(form.password, placeholder="Password") }}
-      <button type="submit" name="submit">Sign up</button>
+      {{ render_field(form.name, placeholder="Your Name", autofocus="", class="signup") }}
+	    {{ render_field(form.email, placeholder="Your Email Address", class="signup") }}
+      {{ render_field(form.password, placeholder="Password", class="signup") }}
+      <button class="btn" type="submit" name="submit">Sign up</button>
+      <a href="/auth/signin" id="btn2">I have an user!</button>
     </form>
   </div>
 </div>

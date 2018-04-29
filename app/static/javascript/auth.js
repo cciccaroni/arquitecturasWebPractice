@@ -1,3 +1,3 @@
-$(document).ready(function(){
-    $('.box').hide().fadeIn(1000);
-});
+forgotPassword = () => {
+  console.log('You forgot the password :p')
+}

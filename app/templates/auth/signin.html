@@ -36,16 +36,12 @@
     {% endfor %}
     </div>
     {% endif %}
-    <form class="form-signin" method="POST" action="." accept-charset="UTF-8" role="form">
+    <form method="POST" action="." accept-charset="UTF-8" role="form">
       {{ form.csrf_token }}
       {{ render_field(form.email, placeholder="Your Email Address",
-                                  autofocus="", class="email",
-                                  onFocus="field_focus(this, 'email');",
-                                  onblur="field_blur(this, 'email');") }}
+                                  autofocus="", class="signin") }}
       {{ render_field(form.password, placeholder="Password",
-                                  autofocus="", class="email",
-                                  onFocus="field_focus(this, 'email');",
-                                  onblur="field_blur(this, 'email');") }}
+                                  autofocus="", class="signin") }}
       
       <div>
       <label>
@@ -53,8 +49,11 @@
       </label>
       </div>
       <button type="submit" class="btn" name="submit">Sign in</button>
-      <button id="btn2">Sign Up</button>
-      <a role="button" href=""><font size="2" style="color:#f1c40f;">Forgot your password?</font></a><span class="clearfix"></span>
+      <a href="/auth/signup" id="btn2">Sign Up</button>
+      <a href="#" onclick='forgotPassword()'><font size="2" style="color:#f1c40f;">Forgot your password?</font></a><span class="clearfix"></span>
     </form>
   </div>
 </div>
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script> -->
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/auth.js') }}" defer></script>
