@@ -42,7 +42,7 @@
 	    {{ render_field(form.email, placeholder="Your Email Address", class="signup") }}
       {{ render_field(form.password, placeholder="Password", class="signup") }}
       <button class="btn" type="submit" name="submit">Sign up</button>
-      <a href="/auth/signin" id="btn2">I have an user!</button>
+      <button type=button onclick="location.href='/auth/signin'" id="btn2">I have an user!</button>
     </form>
   </div>
 </div>

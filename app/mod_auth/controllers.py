@@ -60,7 +60,10 @@ def signup():
         user = User(name, email, password)
         db.session.add(user)
         db.session.commit()
-        return redirect("auth/signin")
+
+        session['user_id'] = user.id
+        
+        return redirect("/")
 
     return render_template("auth/signup.html", form=form)
 
