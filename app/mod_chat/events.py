@@ -6,7 +6,7 @@ from .. import socketio
 
 
 @socketio.on('textMessage', namespace='/chat')
-def textMessageSent(message):
+def textMessageSent(message, adresseeUserId):
 	"""Mensaje de texto enviado por el cliente a un usuario en particular
 		Se envia un evento tanto al emisor como al destinatario
 		(emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
