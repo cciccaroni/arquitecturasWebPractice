@@ -15,7 +15,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128),  nullable=False)
     conversations = db.relationship('Conversation', secondary=user_conversation, lazy='subquery',
-        backref='users')
+                                    back_populates='users')
     # Identification Data: email & password
     email = db.Column(db.String(128),  nullable=False, unique=True)
     password = db.Column(db.String(192),  nullable=False)
@@ -37,8 +37,14 @@ class Conversation(db.Model):
     __tablename__ = 'conversation'
 
     id = db.Column(db.Integer, primary_key=True)
-    messages = db.relationship('Message', lazy='subquery',
+    messages = db.relationship('Message', lazy=True,
                                  backref='conversation')
+    users = db.relationship('User', secondary=user_conversation, lazy='subquery',
+                            back_populates='conversations')
+
+    def __init__(self, users):
+        self.users = users
+
 
     def __repr__(self):
         return '<Conversation %r>' % (self.name)
