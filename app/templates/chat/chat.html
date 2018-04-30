@@ -1,10 +1,9 @@
-<html>
-    <head>
-        <title>{{ adressee.name }}</title>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-        <script type="text/javascript" charset="utf-8">
-            let socket;
+{% extends 'base/base.html' %}
+
+{% block title %}Chat with {{ adressee.name.decode() }}{% endblock %}
+
+{% block custom_script %}
+    let socket;
             $(document).ready(() => {
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat/');
                 socket.on('updateUiWithTextMessage', data => {
@@ -22,16 +21,14 @@
                     }
                 });
             });
-        </script>
-    </head>
-    <body>
-        {% import 'macros/macros.html' as macros %}
-        {{ macros.navbar(actual_user.name.decode()) }}
-        <h1>Chat with: {{ adressee.name }}</h1>
+{% endblock %}
+
+
+{% block body %}
+        <h1>Chat with: {{ adressee.name.decode() }}</h1>
         <textarea id="chat" cols="80" rows="20">
             This is the beginning of your chat with {{adressee.name}}
         </textarea><br><br>
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>
-    </body>
-</html>
+{% endblock %}

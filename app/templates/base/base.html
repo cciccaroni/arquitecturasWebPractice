@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/chat.css') }}">
+    <title>{% block title %}{%endblock%}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
+    <script src="static/jQuery/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+            integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+            crossorigin="anonymous"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+    <script>
+    {% block custom_script %}{%endblock%}
+    </script>
+</head>
+    <body>
+    {% block body %}{%endblock%}
+    </body>
+</html>
