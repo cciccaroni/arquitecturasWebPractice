@@ -17,7 +17,7 @@ def joined(message):
 
     # Broadcast of my new status to all users.
     my_user = User.query.get(user_id)
-    status = {'msg': {'id': my_user.id, 'name': str(my_user.name), 'type':'STATUS', 'status': 'ENTERED'}}
+    status = {'msg': {'id': my_user.id, 'name': str(my_user.name), 'status': 'ENTERED'}}
     users = User.query.all()
     for user in users:
         print (str(user_id), 'sending join status to', str(user.id))
@@ -30,13 +30,15 @@ def textMessage(message, users):
       Se envia un evento tanto al emisor como al destinatario
       (emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
     """
-    print(message, users)
-    status = {'msg': {'msg': message, 'type': 'MESSAGE'}}
+    user_id = session.get('user_id', None)
+    if not user_id:
+      return
+    my_user = User.query.get(user_id)
+
+    status = {'msg': message, 'from': {'name': str(my_user.name), 'id': my_user.id}}
     for user in users:
         print ('Sending:', message, user)
-        # Broadcasteo con un status, porque sino me tengo 
-        # que meter en su sala para mandarle un msg.
-        emit('status', status, room=int(user))
+        emit('message', status, room=int(user))
 
 @socketio.on('left', namespace='/chat')
 def left(message):

@@ -26,24 +26,22 @@
         let socket;
         let conversation = []
         $(document).ready(() => {
-            console.log('http://' + document.domain + ':' + location.port + '/chat')
             socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
             socket.on('connect', () => {
                 socket.emit('joined', {});
             });
-            socket.on('status', function(data) {
-                console.log('new_status', data)
-                if (data.STATUS == 'MESSAGE') {
-                  window.alert('llego message', data.msg.msg);
+            
+            socket.on('message', data => {
+                console.log(data)
+                window.alert(data.msg);
+            });
 
-                } else if (data.msg.STATUS == 'STATUS') {
-                  console.log(data.msg)
-                  if (data.msg.status !== 'ENTERED') return;
-                  if ($(`#${data.msg.id}`) !== undefined) return;
-                  let newUser = `list-group-item list-group-item-action" id={{user.id}} data-toggle="list"`
-                              + `href='#_${data.msg.id} role="tab" aria-controls=${data.msg.name}>${data.msg.name}</a>`
-                  $('.list-group-item-action').last().append(newUser)
-                }
+            socket.on('status', data => {
+                if (data.msg.status !== 'ENTERED') return;
+                if ($(`#${data.msg.id}`) !== undefined) return;
+                let newUser = `list-group-item list-group-item-action" id={{user.id}} data-toggle="list" `
+                            + `href='#_${data.msg.id} role="tab" aria-controls=${data.msg.name}>${data.msg.name}</a>`
+                $('.list-group-item-action').last().append(newUser)
             });
             $("a").click(function() {
                 // location.href = "chat/" + this.id;
