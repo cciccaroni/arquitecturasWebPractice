@@ -28,6 +28,10 @@
             socket.on('message', data => {
                 var userId = data.from.id;
                 $("#" + userId + " [last_received]").text(data.msg);
+                var unread = $("#" + userId + " [unread_count]").attr("unread_count");
+                $("#" + userId + " [unread_count]").attr("unread_count", parseInt(unread) + 1);
+                $("#" + userId + " [unread_count]").text(parseInt(unread) + 1);
+
                 console.log(data)
             });
 
@@ -74,7 +78,7 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
               <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user_name}} <span class="caret"></span></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user_name.decode()}} <span class="caret"></span></a>
                   <ul class="dropdown-menu">
                     <li><a href="/auth/logout">Log off</a></li>
                   </ul>
@@ -93,7 +97,7 @@
             <ul class="list-group">
               {% for user in users %}
                   <a user id={{user.id}} class="list-group-item">
-                    <span unread_count class="badge badge-primary badge-pill"></span>
+                    <span unread_count="0" class="badge badge-primary badge-pill"></span>
                     <h4 name class="list-group-item-heading">{{user.name}}</h4>
                     <p last_received class="list-group-item-text"></p>
                   </a>
