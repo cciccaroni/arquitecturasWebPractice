@@ -28,6 +28,23 @@
         $(document).ready(() => {
             console.log('http://' + document.domain + ':' + location.port + '/chat')
             socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+            socket.on('connect', () => {
+                socket.emit('joined', {});
+            });
+            socket.on('status', function(data) {
+                console.log('new_status', data)
+                if (data.STATUS == 'MESSAGE') {
+                  window.alert('llego message', data.msg.msg);
+
+                } else if (data.msg.STATUS == 'STATUS') {
+                  console.log(data.msg)
+                  if (data.msg.status !== 'ENTERED') return;
+                  if ($(`#${data.msg.id}`) !== undefined) return;
+                  let newUser = `list-group-item list-group-item-action" id={{user.id}} data-toggle="list"`
+                              + `href='#_${data.msg.id} role="tab" aria-controls=${data.msg.name}>${data.msg.name}</a>`
+                  $('.list-group-item-action').last().append(newUser)
+                }
+            });
             $("a").click(function() {
                 // location.href = "chat/" + this.id;
                 conversation = [this.id];
@@ -37,13 +54,13 @@
                 msg = $("#msg").val()
                 if (msg !== '')
                   socket.emit('textMessage', msg, conversation);
-            }); 
-            socket.emit('joined', {});
-            socket.on('connect', () => {
-                socket.emit('joined', {});
             });
-            socket.on('message', data => {
-                window.alert('llego message', data);
+            $("#logout").click(() => {
+                console.log('log out')
+                socket.emit('left', {}, () => {
+                    socket.disconnect();
+                    window.location.href = "{{ url_for('auth.signin') }}";
+                });
             });
         });
     </script>
@@ -52,6 +69,7 @@
 <div class="split left">
   <div class="row">
       <div class="col-4">
+          <p style="display: inline-block;">{{user}}</p> 
           <div class="list-group" id="list-tab" role="tablist">
               {% for user in users %}
                 <a class="list-group-item list-group-item-action" id={{user.id}} data-toggle="list"
@@ -60,6 +78,7 @@
           </div>
       </div>
   </div>
+  <button id='logout'>Logout</button>
 </div>
 <div class="split right">
   <div class="centered">
