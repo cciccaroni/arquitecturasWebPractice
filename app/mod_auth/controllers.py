@@ -33,7 +33,7 @@ def signin():
         if user and user.password == form.password.data.encode():
             session['user_id'] = user.id
             session['user_name'] = user.name
-            return redirect("/")
+            return redirect("/index")
 
         else:
             flash('Wrong email or password', 'error')
@@ -60,7 +60,7 @@ def signup():
 
         session['user_id'] = user.id
 
-        return redirect("/")
+        return redirect("/index")
 
     return render_template("auth/signup.html", form=form)
 

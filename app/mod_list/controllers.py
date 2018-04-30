@@ -9,7 +9,7 @@ from flask_socketio import emit, join_room
 mod_list = Blueprint('list', __name__)
 
 
-@mod_list.route('/', methods=['GET'])
+@mod_list.route('/index', methods=['GET'])
 def chat():
     actual_user = User.query.filter(User.id == session['user_id']).first()
     if actual_user:
