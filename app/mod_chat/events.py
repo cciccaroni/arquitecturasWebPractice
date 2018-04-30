@@ -12,11 +12,14 @@ def joined(message):
     if not user_id:
       return
     
+    my_user = User.query.get(user_id)
+    if not my_user:
+      return
+    
     # Join into my room
     join_room(user_id)
 
     # Broadcast of my new status to all users.
-    my_user = User.query.get(user_id)
     status = {'msg': {'id': my_user.id, 'name': str(my_user.name), 'status': 'ENTERED'}}
     users = User.query.all()
     for user in users:
@@ -33,7 +36,10 @@ def textMessage(message, users):
     user_id = session.get('user_id', None)
     if not user_id:
       return
+    
     my_user = User.query.get(user_id)
+    if not my_user:
+      return
 
     status = {'msg': message, 'from': {'name': str(my_user.name), 'id': my_user.id}}
     for user in users:

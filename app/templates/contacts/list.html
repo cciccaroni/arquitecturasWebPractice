@@ -37,6 +37,7 @@
             });
 
             socket.on('status', data => {
+                console.log(data.msg)
                 if (data.msg.status !== 'ENTERED') return;
                 if ($(`#${data.msg.id}`) !== undefined) return;
                 let newUser = `list-group-item list-group-item-action" id={{user.id}} data-toggle="list" `
