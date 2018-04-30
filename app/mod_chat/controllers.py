@@ -22,5 +22,5 @@ def chat(user_id):
         db.session.commit()
 
 
-    return render_template("chat/chat.html", adressee=adressee_user, actualUser = actual_user)
+    return render_template("chat/chat.html", adressee=adressee_user, actual_user = actual_user)
 

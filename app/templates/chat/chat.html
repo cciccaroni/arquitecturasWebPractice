@@ -25,6 +25,8 @@
         </script>
     </head>
     <body>
+        {% import 'macros/macros.html' as macros %}
+        {{ macros.navbar(actual_user.name.decode()) }}
         <h1>Chat with: {{ adressee.name }}</h1>
         <textarea id="chat" cols="80" rows="20">
             This is the beginning of your chat with {{adressee.name}}

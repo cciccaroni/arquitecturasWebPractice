@@ -11,11 +11,10 @@ mod_list = Blueprint('list', __name__)
 
 @mod_list.route('/', methods=['GET'])
 def chat():
-    user_id = session.get('user_id', None)
-    user_name = session.get('user_name', None)
-    if user_id:
+    actual_user = User.query.filter(User.id == session['user_id']).first()
+    if actual_user:
         return render_template("contacts/list.html", 
                                 users=User.query.all(), 
-                                user_id=user_id, user_name=user_name, text="1")
+                                actual_user=actual_user, text="1")
     
     return redirect("auth/signin")

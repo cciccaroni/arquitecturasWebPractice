@@ -39,7 +39,7 @@
                 console.log(data.msg)
                 if (data.msg.status !== 'ENTERED') return;
                 if ($(`#${data.msg.id}`) !== undefined) return;
-                let newUser = `list-group-item list-group-item-action" id={{user_id}} data-toggle="list" `
+                let newUser = `list-group-item list-group-item-action" id={{actual_user.id}} data-toggle="list" `
                             + `href='#_${data.msg.id} role="tab" aria-controls=${data.msg.name}>${data.msg.name}</a>`
                 $('.list-group-item-action').last().append(newUser)
             });
@@ -72,21 +72,9 @@
     </script>
 </head>
     <body>
+    {% import 'macros/macros.html' as macros %}
+    {{ macros.navbar(actual_user.name.decode()) }}
 
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user_name.decode()}} <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="/auth/logout">Log off</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-        </div>
-    </nav>
     <ul id="myTabs" class="nav nav-tabs">
       <li role="presentation" class="active"><a href="#usuarios">Usuarios</a></li>
       <li role="presentation"><a href="#grupos">Grupos</a></li>
