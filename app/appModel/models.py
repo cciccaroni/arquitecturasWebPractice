@@ -41,13 +41,15 @@ class Conversation(db.Model):
                                  backref='conversation')
     users = db.relationship('User', secondary=user_conversation, lazy='subquery',
                             back_populates='conversations')
+    group = db.relationship('Group', lazy=True,
+                            backref='conversation')
 
-    def __init__(self, users):
+    def __init__(self, users = None, group = None):
         self.users = users
-
+        self.group = group
 
     def __repr__(self):
-        return '<Conversation %r>' % (self.name)
+        return '<Conversation %r>' % (self.id)
 
 
 
@@ -62,7 +64,26 @@ class Message(db.Model):
 
 
     def __repr__(self):
-        return '<Message %r>' % (self.name)
+        return '<Message %r>' % (self.message)
+
+
+
+class Group(db.Model):
+
+    __tablename__ = 'group'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    users = db.relationship('User', lazy='subquery',
+                            backref='group')
+
+    def __init__(self, name, users):
+        self.name = name
+        self.users = users
+
+
+    def __repr__(self):
+        return '<Group %r>' % (self.name)
 
 
 
