@@ -7,7 +7,7 @@ from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
-socketio = SocketIO()
+socketio = SocketIO(engineio_logger=True)
 
 # Configurations
 app.config.from_object('config')

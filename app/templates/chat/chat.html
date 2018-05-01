@@ -1,37 +1,47 @@
-{% extends 'base/base.html' %}
+<html>
+    <head>
+        <title>{{ adressee.name }}</title>
+            <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            $(document).ready(function(){
 
-{% block title %}Chat with {{ adressee.name.decode() }}{% endblock %}
+                socket = io.connect('http://' + location.host + '/chat');
 
-{% block custom_script %}
-    let socket;
-            $(document).ready(() => {
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat/');
-                socket.on('updateUiWithTextMessage', data => {
-                    $('#chat').val($('#chat').val() + data.msg + '\n');
+                socket.on('connect', function() {
+                    socket.emit('joined');
+                });
+
+                socket.on('uiTextMessage', function(data) {
+                    $('#chat').val($('#chat').val() + data.from + ': '+ data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
-                $('#text').keypress(e => {
-                    const code = e.keyCode || e.which;
+                $('#text').keypress(function(e) {
+                    var code = e.keyCode || e.which;
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('textMessage', {msg : text});
-
+                        socket.emit('textMessage', {msg: text, toId: {{ adressee.id }}, fromName: '{{ actual_user.name}}' });
                     }
                 });
             });
-{% endblock %}
+        </script>
 
-
-{% block body %}
-        {% import 'macros/macros.html' as macros %}
-        {{ macros.navbar(actual_user.name.decode()) }}
-
-        <h1>Chat with: {{ adressee.name.decode() }}</h1>
+        <script type="text/javascript" charset="utf-8">
+            $(document).ready(function(){
+                for
+                $('#chat').append($(this).text());
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Chat with: {{ adressee.name }}</h1>
         <textarea id="chat" cols="80" rows="20">
             This is the beginning of your chat with {{adressee.name}}
         </textarea><br><br>
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>
-{% endblock %}
+    </body>
+</html>

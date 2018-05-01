@@ -3,52 +3,13 @@
 {% block title %}Index{% endblock %}
 
 {% block custom_script %}
-    let socket;
             let conversation = []
             $(document).ready(() => {
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
-                socket.on('connect', () => {
-                    socket.emit('joined', {});
+                     $("[user]").click(function() {
+                    location.href = "chat/" + this.id;
                 });
 
-                socket.on('message', data => {
-                    var userId = data.from.id;
-                    $("#" + userId + " [last_received]").text(data.msg);
-                    var unread = $("#" + userId + " [unread_count]").attr("unread_count");
-                    $("#" + userId + " [unread_count]").attr("unread_count", parseInt(unread) + 1);
-                    $("#" + userId + " [unread_count]").text(parseInt(unread) + 1);
 
-                    console.log(data)
-                });
-
-                socket.on('status', data => {
-                    console.log(data.msg)
-                    if (data.msg.status !== 'ENTERED') return;
-                    if ($(`#${data.msg.id}`) !== undefined) return;
-                    let newUser = `list-group-item list-group-item-action" id={{actual_user.id}} data-toggle="list" `
-                                + `href='#_${data.msg.id} role="tab" aria-controls=${data.msg.name}>${data.msg.name}</a>`
-                    $('.list-group-item-action').last().append(newUser)
-                });
-
-                $("[user]").click(function() {
-                    //location.href = "chat/" + this.id;
-                    conversation = [this.id];
-                    $("#conversation").text(this.id)
-                });
-
-                $("#send").click(() => {
-                    msg = $("#msg").val()
-                    if (msg !== '')
-                      socket.emit('textMessage', msg, conversation);
-                });
-
-                $("#logout").click(() => {
-                    console.log('log out')
-                    socket.emit('left', {}, () => {
-                        socket.disconnect();
-                        window.location.href = "{{ url_for('auth.signin') }}";
-                    });
-                });
 
                 $('#myTabs a').click(function (e) {
                   e.preventDefault()
