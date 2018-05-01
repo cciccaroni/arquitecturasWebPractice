@@ -1,11 +1,17 @@
 {% extends 'base/base.html' %}
 
-{% block title %}Chat with {{ adressee.name.decode() }}{% endblock %}
+{% block title %}Chat with {{ chatTitle }}{% endblock %}
 
 {% block custom_script %}
-    var socket;
-            $(document).ready(function(){
 
+    let socket
+    let recipients
+            $(document).ready(() => {
+                recipients = [];
+                {% for user in recipientsList %}
+                    var recipientId = {{user.id}};
+                    recipients.push(recipientId);
+                {% endfor %}
                 socket = io.connect('http://' + location.host + '/chat');
 
                 socket.on('connect', function() {
@@ -13,6 +19,7 @@
                 });
 
                 socket.on('uiTextMessage', function(data) {
+                    alert("recibido");
                     $('#chat').val($('#chat').val() + data.from + ': '+ data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
@@ -22,7 +29,7 @@
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('textMessage', {msg: text, toIds: [{{ adressee.id }}], fromName: '{{ actual_user.name}}' });
+                        socket.emit('textMessage', {msg: text, toIds: JSON.stringify(recipients), fromName: '{{ actual_user.name}}' });
                     }
                 });
             });
@@ -33,9 +40,9 @@
         {% import 'macros/macros.html' as macros %}
         {{ macros.navbar(actual_user.name.decode()) }}
 
-        <h1>Chat with: {{ adressee.name.decode() }}</h1>
+        <h1>Chat with: {{ chatTitle }}</h1>
         <textarea id="chat" cols="80" rows="20">
-            This is the beginning of your chat with {{adressee.name}}
+            This is the beginning of your chat with {{chatTitle}}
         </textarea><br><br>
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>

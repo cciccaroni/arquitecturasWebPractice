@@ -11,14 +11,24 @@ mod_chat = Blueprint('chat', __name__, url_prefix="/chat")
 
 
 @mod_chat.route('/<user_id>', methods=['GET'])
-def chat(user_id):
+def chatWithUser(user_id):
     fromUser = session['user_id']
     if not login_manager.isAuthorized(fromUser):
-      return redirect("auth/signin")
+        return redirect("auth/signin")
 
     toUser = user_id
-
     conversation = conversation_manager.startConversation(fromUser, toUser)
 
-    return render_template("chat/chat.html", adressee=conversation.toUser, actual_user=conversation.fromUser,messages = conversation.messages)
+    members = [conversation.toUser.id]
 
+    return render_template("chat/chat.html",
+                           chatTitle=conversation.toUser.name.decode(),
+                           actual_user=conversation.fromUser,
+                           recipientsList=members)
+
+
+# TODO
+@mod_chat.route('/group/<group_id>', methods=['GET'])
+def chatWithGroup(group_id):
+    actual_user = User.query.filter(User.id == session['user_id']).first()
+    return

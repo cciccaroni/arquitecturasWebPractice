@@ -26,6 +26,8 @@ def joined():
     #     emit('status', status, room=user.id)
 
 
+# TODO revisar el tema de que el json se recibe como unicode
+# Se deberia iterar el toIds, que vienen todos los ids a los que hay que enviar el evento
 @socketio.on('textMessage', namespace='/chat')
 def textMessage(json):
     """Mensaje de texto enviado por el cliente a un usuario en particular
@@ -41,7 +43,6 @@ def textMessage(json):
         return
 
     status = {'msg': json['msg'], 'from': json['fromName']}
-    emit('uiTextMessage', status, room=user_id)
     emit('uiTextMessage', status, room=json['toIds'][0])
     print("mensaje enviado a los miembros del chat")
 

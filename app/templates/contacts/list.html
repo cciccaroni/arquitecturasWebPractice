@@ -3,7 +3,7 @@
 {% block title %}Index{% endblock %}
 
 {% block custom_script %}
-            let conversation = []
+            var socket;
             $(document).ready(() => {
                      $("[user]").click(function() {
                     location.href = "chat/" + this.id;
