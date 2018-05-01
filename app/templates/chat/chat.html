@@ -3,21 +3,26 @@
 {% block title %}Chat with {{ adressee.name.decode() }}{% endblock %}
 
 {% block custom_script %}
-    let socket;
-            $(document).ready(() => {
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat/');
-                socket.on('updateUiWithTextMessage', data => {
-                    $('#chat').val($('#chat').val() + data.msg + '\n');
+    var socket;
+            $(document).ready(function(){
+
+                socket = io.connect('http://' + location.host + '/chat');
+
+                socket.on('connect', function() {
+                    socket.emit('joined');
+                });
+
+                socket.on('uiTextMessage', function(data) {
+                    $('#chat').val($('#chat').val() + data.from + ': '+ data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
-                $('#text').keypress(e => {
-                    const code = e.keyCode || e.which;
+                $('#text').keypress(function(e) {
+                    var code = e.keyCode || e.which;
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('textMessage', {msg : text});
-
+                        socket.emit('textMessage', {msg: text, toIds: [{{ adressee.id }}], fromName: '{{ actual_user.name}}' });
                     }
                 });
             });
@@ -35,3 +40,4 @@
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>
 {% endblock %}
+

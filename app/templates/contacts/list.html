@@ -3,7 +3,23 @@
 {% block title %}Index{% endblock %}
 
 {% block custom_script %}
-    let socket;
+            let conversation = []
+            $(document).ready(() => {
+                     $("[user]").click(function() {
+                    location.href = "chat/" + this.id;
+                });
+
+
+
+                $('#myTabs a').click(function (e) {
+                  e.preventDefault()
+                  $(this).tab('show')
+                })
+
+
+
+/* previously
+            let socket;
             let conversation = []
             $(document).ready(() => {
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
@@ -17,8 +33,22 @@
                     var unread = $("#" + userId + " [unread_count]").attr("unread_count");
                     $("#" + userId + " [unread_count]").attr("unread_count", parseInt(unread) + 1);
                     $("#" + userId + " [unread_count]").text(parseInt(unread) + 1);
-
+                    $("#" + userId + " [image]").attr("src", "");
+                    $("#" + userId + " [image]").hide()
                     console.log(data)
+                });
+
+                socket.on('image', data => {
+                    var arrayBuffer = data.msg;
+                    var bytes = new Uint8Array(arrayBuffer);
+                    var userId = data.from.id;
+                    $("#" + userId + " [image]").attr("src", 'data:image/png;base64,'+encode(bytes));
+                    var unread = $("#" + userId + " [unread_count]").attr("unread_count");
+                    $("#" + userId + " [unread_count]").attr("unread_count", parseInt(unread) + 1);
+                    $("#" + userId + " [unread_count]").text(parseInt(unread) + 1);
+                     $("#" + userId + " [last_received]").text("");
+                    $("#" + userId + " [image]").show()
+
                 });
 
                 socket.on('status', data => {
@@ -54,6 +84,51 @@
                   e.preventDefault()
                   $(this).tab('show')
                 })
+
+                $("#file").on("change", function (e) {
+                    var file = $(this)[0].files[0];
+                    var fileReader = new FileReader();
+                    if (file) {
+                        fileReader.readAsArrayBuffer(file);
+                        fileReader.onload = function () {
+                            var imageData = fileReader.result;
+                            socket.emit('imageMessage', imageData, conversation);
+                        };
+                    }
+                });
+
+                function encode (input) {
+                    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+                    var output = "";
+                    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+                    var i = 0;
+
+                    while (i < input.length) {
+                        chr1 = input[i++];
+                        chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index
+                        chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
+
+                        enc1 = chr1 >> 2;
+                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                        enc4 = chr3 & 63;
+
+                        if (isNaN(chr2)) {
+                            enc3 = enc4 = 64;
+                        } else if (isNaN(chr3)) {
+                            enc4 = 64;
+                        }
+                        output += keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+                                  keyStr.charAt(enc3) + keyStr.charAt(enc4);
+                    }
+                    return output;
+                }
+
+            });
+*/
+
+
+
             });
 {% endblock %}
 

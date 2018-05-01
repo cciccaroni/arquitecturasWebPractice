@@ -1,14 +1,13 @@
-from flask import Blueprint, session, render_template, request
+from flask import Blueprint, session, render_template
 from werkzeug.utils import redirect
 
-from app import socketio
 from app.appModel.models import User
-from flask_socketio import emit, join_room
 
 
 mod_list = Blueprint('list', __name__)
 
 
+@mod_list.route('/', methods=['GET'])
 @mod_list.route('/index', methods=['GET'])
 def chat():
     actual_user = User.query.filter(User.id == session['user_id']).first()

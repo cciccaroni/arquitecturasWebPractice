@@ -1,1 +1,1 @@
-from . import events
+import chatEvents

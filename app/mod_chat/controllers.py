@@ -1,4 +1,4 @@
-from flask import Blueprint, request, session, render_template
+from flask import Blueprint, session, render_template
 from werkzeug.utils import redirect
 
 from app.appModel.models import Conversation, User
@@ -21,6 +21,5 @@ def chat(user_id):
         db.session.add(conversation)
         db.session.commit()
 
-
-    return render_template("chat/chat.html", adressee=adressee_user, actual_user = actual_user)
+    return render_template("chat/chat.html", adressee=adressee_user, actual_user=actual_user)
 
