@@ -1,1 +1,1 @@
-import chatEvents
+from app.mod_chat import chatEvents
