@@ -8,7 +8,7 @@ mod_chat = Blueprint('chat', __name__, url_prefix="/chat")
 
 
 @mod_chat.route('/<user_id>', methods=['GET'])
-def chat(user_id):
+def chatWithUser(user_id):
     actual_user = User.query.filter(User.id == session['user_id']).first()
     if not actual_user:
       return redirect("auth/signin")
@@ -21,5 +21,16 @@ def chat(user_id):
         db.session.add(conversation)
         db.session.commit()
 
-    return render_template("chat/chat.html", adressee=adressee_user, actual_user=actual_user)
+    members = [adressee_user]
 
+    return render_template("chat/chat.html",
+                           chatTitle=adressee_user.name.decode(),
+                           actual_user=actual_user,
+                           recipientsList=members)
+
+
+# TODO
+@mod_chat.route('/group/<group_id>', methods=['GET'])
+def chatWithGroup(group_id):
+    actual_user = User.query.filter(User.id == session['user_id']).first()
+    return
