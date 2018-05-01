@@ -28,6 +28,7 @@ def not_found(error):
 
 #init db
 from app.mod_database.database import init_db
+from app.appModel.models import *
 init_db()
 
 
