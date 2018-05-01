@@ -22,7 +22,7 @@
                     if (code == 13) {
                         text = $('#text').val();
                         $('#text').val('');
-                        socket.emit('textMessage', {msg: text, toId: {{ adressee.id }}, fromName: '{{ actual_user.name}}' });
+                        socket.emit('textMessage', {msg: text, toIds: [{{ adressee.id }}], fromName: '{{ actual_user.name}}' });
                     }
                 });
             });

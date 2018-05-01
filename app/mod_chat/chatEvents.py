@@ -42,7 +42,7 @@ def textMessage(json):
 
     status = {'msg': json['msg'], 'from': json['fromName']}
     emit('uiTextMessage', status, room=user_id)
-    emit('uiTextMessage', status, room=json['toId'])
+    emit('uiTextMessage', status, room=json['toIds'][0])
     print("mensaje enviado a los miembros del chat")
 
 
