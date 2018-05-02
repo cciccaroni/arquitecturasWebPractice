@@ -23,11 +23,6 @@ def not_found(error):
     return render_template('auth/404.html'), 404
 
 
-#init db
-from app.mod_database.database import init_db
-init_db()
-
-
 # Import a module / component using its blueprint handler variable (mod_auth)
 from app.mod_auth.controllers import mod_auth as auth_module
 from app.mod_list.controllers import mod_list
@@ -39,3 +34,7 @@ app.register_blueprint(mod_list)
 app.register_blueprint(mod_chat)
 # app.register_blueprint(xyz_module)
 # ..
+
+#init db
+from app.mod_database.database import init_db
+init_db()

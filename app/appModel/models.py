@@ -2,10 +2,16 @@ from app.mod_database import db
 
 
 # esta tabla es necesaria para las relaciones muchos a muchos
+user_group = db.Table('user_group',
+                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+                             db.Column('group_id', db.Integer, db.ForeignKey('group.id'), primary_key=True)
+)
+
 user_conversation = db.Table('user_conversation',
                              db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                              db.Column('conversation_id', db.Integer, db.ForeignKey('conversation.id'), primary_key=True)
 )
+
 
 # Define a User model
 class User(db.Model):
@@ -16,6 +22,9 @@ class User(db.Model):
     name = db.Column(db.String(128),  nullable=False)
     conversations = db.relationship('Conversation', secondary=user_conversation, lazy='subquery',
                                     back_populates='users')
+    groups = db.relationship('Group', secondary=user_group, lazy='subquery',
+                                    back_populates='users')
+
     # Identification Data: email & password
     email = db.Column(db.String(128),  nullable=False, unique=True)
     password = db.Column(db.String(192),  nullable=False)
@@ -74,8 +83,10 @@ class Group(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
-    users = db.relationship('User', lazy='subquery',
-                            backref='group')
+    users = db.relationship('User', secondary=user_group, lazy='subquery',
+                            back_populates='groups')
+    conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
+
 
     def __init__(self, name, users):
         self.name = name
@@ -84,7 +95,5 @@ class Group(db.Model):
 
     def __repr__(self):
         return '<Group %r>' % (self.name)
-
-
 
 
