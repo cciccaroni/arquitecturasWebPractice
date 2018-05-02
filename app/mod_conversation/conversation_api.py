@@ -23,7 +23,7 @@ class EmptyConversationDTO:
     def __init__(self, conversation,fromUserID, toUserID):
         self.id = conversation.id
         self.fromUser = UserDTO(fromUserID)
-        self.toUserName = UserDTO(toUserID)
+        self.toUser = UserDTO(toUserID)
         self.messages = []
 
 
@@ -42,8 +42,10 @@ class ConversationManager:
         if not users_conversation or len(users_conversation) == 0:
             conversation = Conversation([fromUser, toUser])
             db.session.add(conversation)
+            db.session.flush()
+            new_conversation = EmptyConversationDTO(conversation, fromUser.id, toUser.id)
             db.session.commit()
-            return EmptyConversationDTO(conversation, fromUser.id, toUser.id)
+            return new_conversation
         else:
 
             return ConversationDTO(users_conversation[0], fromUser.id, toUser.id)
