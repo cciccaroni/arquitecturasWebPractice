@@ -34,7 +34,8 @@ def signin():
 
     # If sign in form is submitted
     form = LoginForm(request.form)
-    print(request.args)
+    next = request.args.get('next')
+    
     # Verify the sign in form
     if form.validate_on_submit():
         user = User.query.filter(User.email == form.email.data.encode()).first()
@@ -42,13 +43,14 @@ def signin():
         if user and user.password == form.password.data.encode():
             session['user_id'] = user.id
             session['user_name'] = user.name
-            next = request.args.get('next')
-            print(request.args)
-            print('we are moving to', next)
             return redirect(next or '/')
 
         else:
             flash('Wrong email or password', 'error')
+    
+    if (next):
+      return render_template('signin.html', form=form, next=next)
+
     return render_template('signin.html', form=form)
 
 
@@ -56,19 +58,27 @@ def signin():
 def signup():
     # If sign in form is submitted
     form = SignUpForm(request.form)
+    next = request.args.get('next')
 
     # Verify the sign in form
     if form.validate_on_submit():
-        email = unicodedata.normalize('NFKD', form.email.data).encode('ascii', 'ignore')
-        name = unicodedata.normalize('NFKD', form.name.data).encode('ascii', 'ignore')
-        password = unicodedata.normalize('NFKD', form.password.data).encode('ascii', 'ignore')
-        user = User(name, email, password)
-        db.session.add(user)
-        db.session.commit()
+        user = User.query.filter(User.email == form.email.data.encode()).first()
+        if not user:
+            email = unicodedata.normalize('NFKD', form.email.data).encode('ascii', 'ignore')
+            name = unicodedata.normalize('NFKD', form.name.data).encode('ascii', 'ignore')
+            password = unicodedata.normalize('NFKD', form.password.data).encode('ascii', 'ignore')
+            user = User(name, email, password)
+            db.session.add(user)
+            db.session.commit()
 
-        session['user_id'] = user.id
+            session['user_id'] = user.id
+            session['user_name'] = user.name
+            return redirect(next or '/')
 
-        return redirect('/')
+        flash('Email already exists', 'error')
+
+    if (next):
+        return render_template('signup.html', form=form, next=next)
 
     return render_template('signup.html', form=form)
 

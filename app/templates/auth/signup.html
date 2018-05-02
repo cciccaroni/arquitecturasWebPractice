@@ -1,6 +1,8 @@
 <head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/auth.css') }}">
-    <script src="{{ url_for('static', filename='jQuery/jquery-3.3.1.slim.min.js')}}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/auth.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+  <script src="{{ url_for('static', filename='jQuery/jquery-3.3.1.slim.min.js')}}"></script>
+  <title>{{appName}} - Sign up</title>
 </head>
 {% macro render_field(field, placeholder=None) %}
 {% if field.errors %}
@@ -37,13 +39,16 @@
     {% endfor %}
     </div>
     {% endif %}
-    <form class="form-signup" method="POST" action="." accept-charset="UTF-8" role="form">
+
+    {% if not next%} {%set next = '/' %}{% endif %}
+    <form class="form-signup" method="POST" action="{{url_for('auth.signup')}}?next={{next}}"
+      accept-charset="UTF-8" role="form">
       {{ form.csrf_token }}
       {{ render_field(form.name, placeholder="Your Name", autofocus="", class="signup") }}
 	    {{ render_field(form.email, placeholder="Your Email Address", class="signup") }}
       {{ render_field(form.password, placeholder="Password", class="signup") }}
-      <button class="btn" type="submit" name="submit">Sign up</button>
-      <button type=button onclick="location.href='/auth/signin'" id="btn2">I have an user!</button>
+      <button class="btn" type="submit" name="submit">Create user</button>
+      <button type=button onclick="location.href=&quot;{{url_for('auth.signin')}}&quot;" id="btn2">I have an user!</button>
     </form>
   </div>
 </div>

@@ -1,6 +1,8 @@
 <head>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/auth.css') }}">
   <script src="{{ url_for('static', filename='jQuery/jquery-3.3.1.slim.min.js')}}"></script>
+  <title>{{appName}} - Sign in</title>
 </head>
 {% macro render_field(field, placeholder=None) %}
 {% if field.errors %}
@@ -37,7 +39,11 @@
     {% endfor %}
     </div>
     {% endif %}
-    <form method="POST" action="." accept-charset="UTF-8" role="form">
+    
+    {% if not next%} {%set next = '/' %}{% endif %}
+    <form method="POST" action="{{url_for('auth.signin')}}?next={{next}}"
+      accept-charset="UTF-8" role="form">
+
       {{ form.csrf_token }}
       {{ render_field(form.email, placeholder="Your Email Address",
                                   autofocus="", class="signin") }}
@@ -46,12 +52,12 @@
       
       <div>
       <label>
-        <input type="checkbox" name="remember" value="1"> Remember Me
+        <input type="checkbox" name="remember" value="1"> Remember Me {{next}}
       </label>
       </div>
       <button type="submit" class="btn" name="submit">Sign in</button>
-      <button type=button onclick="location.href='/auth/signup'" id="btn2">Sign Up</button>
-      <a href="#" onclick='forgotPassword()'><font size="2" style="color:#f1c40f;">Forgot your password?</font></a><span class="clearfix"></span>
+      <button type=button onclick="location.href=&quot;{{url_for('auth.signup')}}?next={{next}}&quot;" id="btn2">Create user</button>
+      <a href="#" onclick="forgotPassword();"><font size="2" style="color:#f1c40f;">Forgot your password?</font></a><span class="clearfix"></span>
     </form>
   </div>
 </div>
