@@ -5,9 +5,11 @@ from flask import Flask, render_template, send_from_directory
 
 # Define the WSGI application object
 from flask_socketio import SocketIO
+from flask_login import LoginManager
 
 app = Flask(__name__)
 socketio = SocketIO(engineio_logger=True)
+login_manager = LoginManager()
 
 # Configurations
 app.config.from_object('config')

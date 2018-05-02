@@ -1,4 +1,6 @@
 from flask import Blueprint, session, render_template
+from flask_login import login_required
+
 from werkzeug.utils import redirect
 
 from app.appModel.models import Conversation, User
@@ -11,6 +13,7 @@ mod_chat = Blueprint('chat', __name__, url_prefix="/chat")
 
 
 @mod_chat.route('/<user_id>', methods=['GET'])
+@login_required
 def chatWithUser(user_id):
     fromUser = session['user_id']
     if not login_manager.isAuthorized(fromUser):
@@ -28,6 +31,7 @@ def chatWithUser(user_id):
 
 # TODO
 @mod_chat.route('/group/<group_id>', methods=['GET'])
+@login_required
 def chatWithGroup(group_id):
     actual_user = User.query.filter(User.id == session['user_id']).first()
     return
