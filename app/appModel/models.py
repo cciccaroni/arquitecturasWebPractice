@@ -1,4 +1,5 @@
 from app.mod_database import db
+from sqlalchemy.sql import *
 
 
 # esta tabla es necesaria para las relaciones muchos a muchos
@@ -50,6 +51,20 @@ class Conversation(db.Model):
         return '<Conversation %r>' % (self.name)
 
 
+class ConversationName(db.Model):
+    __tablename__ = 'conversation_name'
+
+    id = db.Column(db.Integer, primary_key=True)
+    conversation = db.Column(db.Integer, db.ForeignKey('conversation.id'))
+    name = db.Column(db.String(128), nullable=False)
+
+    def __init__(self,conversation,name):
+        self.conversation = conversation
+        self.name = name
+
+    def __repr__(self):
+        return '<ConversationName %r>' % (self.name)
+
 
 class Message(db.Model):
 
@@ -59,6 +74,11 @@ class Message(db.Model):
     message = db.Column(db.String(128), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
+
+    def __init__(self,message,user_id,conversation_id):
+        self.message = message
+        self.user_id = user_id
+        self.conversation_id = conversation_id
 
 
     def __repr__(self):

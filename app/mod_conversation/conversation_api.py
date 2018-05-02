@@ -8,7 +8,7 @@ class UserDTO:
 class MessageDTO:
     def __init__(self, fromUserID,message):
         self.fromUser = UserDTO(fromUserID)
-        self.message = message
+        self.payload = message
 
 
 class ConversationDTO:
@@ -16,10 +16,10 @@ class ConversationDTO:
         self.id = conversation.id
         self.fromUser = UserDTO(fromUserID)
         self.toUser = UserDTO(toUserID)
-        self.messages = map(lambda message: MessageDTO(message),list(conversation.messages))
+        self.messages = list(map(lambda message: MessageDTO(message.user_id,message.message),list(conversation.messages)))
 
 
-class EmptyConversationDTO(object):
+class EmptyConversationDTO:
     def __init__(self, conversation,fromUserID, toUserID):
         self.id = conversation.id
         self.fromUser = UserDTO(fromUserID)
@@ -27,7 +27,7 @@ class EmptyConversationDTO(object):
         self.messages = []
 
 
-class ConversationManager(object):
+class ConversationManager:
     def __init__(self, db):
         self.db = db
         self.users = User.__table__
@@ -43,10 +43,26 @@ class ConversationManager(object):
             conversation = Conversation([fromUser, toUser])
             db.session.add(conversation)
             db.session.commit()
-            return EmptyConversationDTO(conversation, fromUserID, toUserID)
+            return EmptyConversationDTO(conversation, fromUser.id, toUser.id)
         else:
-            return ConversationDTO(users_conversation[0], fromUserID, toUserID)
 
+            return ConversationDTO(users_conversation[0], fromUser.id, toUser.id)
+
+    #TODO: improve error conditions when the userid doesnt match with the conversation
+    def log_message(self,fromUserID,message,conversationID):
+        fromUser = User.query.filter(User.id == fromUserID).first()
+        if not fromUser:
+            return
+
+        conversation = Conversation.query.filter(Conversation.id == conversationID).first()
+        if fromUser not in conversation.users:
+            return
+
+        new_message = Message(message,fromUserID,conversationID)
+        db.session.add(new_message)
+        conversation.messages.append(new_message)
+        db.session.commit()
+        return
 
 
 conversation_manager = ConversationManager(db)

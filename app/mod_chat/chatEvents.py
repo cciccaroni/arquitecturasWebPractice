@@ -3,6 +3,7 @@ from flask_socketio import join_room, emit
 
 from app import socketio
 from app.appModel.models import User
+from app.mod_conversation.conversation_api import conversation_manager
 
 
 @socketio.on('joined', namespace='/chat')
@@ -26,7 +27,7 @@ def joined():
     #     emit('status', status, room=user.id)
 
 
-# TODO revisar el tema de que el json se recibe como unicode
+
 # Se deberia iterar el toIds, que vienen todos los ids a los que hay que enviar el evento
 @socketio.on('textMessage', namespace='/chat')
 def textMessage(json):
@@ -42,8 +43,13 @@ def textMessage(json):
     if not my_user:
         return
 
+    #TODO: armar un chat_manager que tenga el conversation_manager adentro
+    conversation_manager.log_message(user_id,json['msg'],json['conversationId'])
+
     status = {'msg': json['msg'], 'from': json['fromName']}
-    emit('uiTextMessage', status, room=json['toIds'][0])
+    # TODO: SACAR ESTE EVAL POR EL AMOR DE DIOS!
+    for recipient in eval(json['toIds']):
+        emit('uiTextMessage', status, room=recipient)
     print("mensaje enviado a los miembros del chat")
 
 

@@ -19,12 +19,11 @@ def chatWithUser(user_id):
     toUser = user_id
     conversation = conversation_manager.startConversation(fromUser, toUser)
 
-    members = [conversation.toUser.id]
-
     return render_template("chat/chat.html",
-                           chatTitle=conversation.toUser.name.decode(),
+                           chatTitle=conversation.toUser,
                            actual_user=conversation.fromUser,
-                           recipientsList=members)
+                           recipientsList=[conversation.toUser,conversation.fromUser],
+                           conversation=conversation)
 
 
 # TODO
