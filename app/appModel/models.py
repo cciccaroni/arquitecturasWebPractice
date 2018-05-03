@@ -13,6 +13,36 @@ user_conversation = db.Table('user_conversation',
                                        primary_key=True)
                              )
 
+class LoggedUser():
+    '''
+      This class is used to represent logged users.
+    '''
+    def __init__(self, user):
+          #: A factory function that produces an user representation 
+          #: which is stored in current_user when someone is logged in.
+          self.name = user.name
+          self.email = user.email
+          self.id = user.id
+    
+    def is_authenticated(self):
+        #: This property should return True if the user is authenticated
+        #: Only authenticated users will fulfill the criteria of login_required
+        return True
+
+    def is_active(self):
+        #: This property should return True if this is an active user - in 
+        #: addition to being authenticated, they also have activated their 
+        #: account. Inactive accounts may not log in.
+        return True
+
+    def is_anonymous(self):
+        #: This property should return True if this is an anonymous user.
+        return False
+
+    def get_id(self):
+        #: This method must return a unicode that uniquely identifies this 
+        #: user. It can be used to load the user from the user_loader callback.
+        return self.id
 
 # Define a User model
 class User(db.Model):
@@ -40,19 +70,9 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % (self.name)
-
-    # Required for login
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return self.id
+    
+    def getLoggedUser(self):
+        return LoggedUser(self)
 
 
 class Conversation(db.Model):

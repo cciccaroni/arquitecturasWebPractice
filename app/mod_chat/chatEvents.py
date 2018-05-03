@@ -17,7 +17,6 @@ def joined():
 
     # Join into my room
     join_room(user_id)
-    print("user joineado")
 
     # Broadcast of my new status to all users.
     # status = {'msg': {'id': my_user.id, 'name': str(my_user.name), 'status': 'ENTERED'}}

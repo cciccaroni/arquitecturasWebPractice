@@ -21,10 +21,13 @@ login_manager.login_view = '/auth/signin/'
 
 @login_manager.user_loader
 def user_loader(user_id):
+    '''
+      This sets the callback for reloading a user from the session. 
+      The function you set should take a user ID (a unicode) and 
+      return a user object, or None if the user does not exist.
+    '''
     user = User.query.filter_by(id=user_id).first()
-    # We are returning the db object we could make a 
-    # new logged_user object instad.
-    return None if not user else user
+    return None if not user else user.getLoggedUser()
 
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
@@ -44,7 +47,7 @@ def signin():
         user = User.query.filter(User.email == form.email.data.encode()).first()
 
         if user and user.password == form.password.data.encode():
-            login_user(user, remember=form.remember.data)
+            login_user(user.getLoggedUser(), remember=form.remember.data)
             # Now the user is accesible via current_user
             session['user_id'] = user.id
             session['user_name'] = user.name
