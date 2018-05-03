@@ -49,5 +49,5 @@ def chatWithGroup(group_id):
     return render_template("chat/chat.html",
                            chatTitle=toGroup,
                            actual_user=fromUser,
-                           recipientsList=conversation.users,
+                           recipientsList=conversation.group.users,
                            conversation=conversation)

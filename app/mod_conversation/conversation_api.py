@@ -56,7 +56,7 @@ class ConversationManager:
             return
 
         conversation = Conversation.query.filter(Conversation.id == conversationID).first()
-        if fromUser not in conversation.users:
+        if fromUser not in conversation.users and fromUser not in conversation.group.users:
             return
 
         new_message = Message(message,fromUserID,conversationID)
