@@ -11,10 +11,7 @@ def joined():
     # """Sent by clients when they enter a room.
     # A status message is broadcast to all people in the room."""
     user_id = session.get('user_id', None)
-    my_user = User.query.get(user_id)
-    if not my_user:
-        return
-
+    
     # Join into my room
     join_room(user_id)
 
@@ -22,7 +19,6 @@ def joined():
     # status = {'msg': {'id': my_user.id, 'name': str(my_user.name), 'status': 'ENTERED'}}
     # users = User.query.all()
     # for user in users:
-    #     print (str(user_id), 'sending join status to', str(user.id))
     #     emit('status', status, room=user.id)
 
 

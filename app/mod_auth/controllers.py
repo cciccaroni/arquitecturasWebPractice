@@ -13,22 +13,9 @@ from app.appModel.models import User
 import unicodedata
 
 from app.mod_database import db
-from app import login_manager
+
 from flask_login import login_user, logout_user, current_user
-
-# Login Manager configuration.
-login_manager.login_view = '/auth/signin/'
-
-@login_manager.user_loader
-def user_loader(user_id):
-    '''
-      This sets the callback for reloading a user from the session. 
-      The function you set should take a user ID (a unicode) and 
-      return a user object, or None if the user does not exist.
-    '''
-    user = User.query.filter_by(id=user_id).first()
-    return None if not user else user.getLoggedUser()
-
+from . import LoggedUser
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 mod_auth = Blueprint('auth', __name__, url_prefix='/auth', template_folder='../templates/auth')
@@ -47,10 +34,9 @@ def signin():
         user = User.query.filter(User.email == form.email.data.encode()).first()
 
         if user and user.password == form.password.data.encode():
-            login_user(user.getLoggedUser(), remember=form.remember.data)
+            login_user(LoggedUser(user), remember=form.remember.data)
             # Now the user is accesible via current_user
-            session['user_id'] = user.id
-            session['user_name'] = user.name
+            # session['user_name'] = user.name
             return redirect(next or '/')
 
         else:
@@ -79,9 +65,8 @@ def signup():
             db.session.add(user)
             db.session.commit()
             
-            login_user(user)
-            session['user_id'] = user.id
-            session['user_name'] = user.name
+            login_user(user.getLoggedUser())
+            # session['user_name'] = user.name
             return redirect(next or '/')
 
         flash('Email already exists', 'error')

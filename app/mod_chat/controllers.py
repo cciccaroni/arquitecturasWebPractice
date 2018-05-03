@@ -4,9 +4,8 @@ from flask_login import login_required
 from werkzeug.utils import redirect
 
 from app.appModel.models import Conversation, User, Group
-from app.mod_conversation import conversation_api, login_api
 from app.mod_conversation.conversation_api import conversation_manager
-from app.mod_conversation.login_api import login_manager
+# from app.mod_conversation.login_api import login_manager
 from app.mod_database import db
 
 mod_chat = Blueprint('chat', __name__, url_prefix="/chat")
@@ -16,8 +15,9 @@ mod_chat = Blueprint('chat', __name__, url_prefix="/chat")
 @login_required
 def chatWithUser(user_id):
     fromUser = session['user_id']
-    if not login_manager.isAuthorized(fromUser):
-        return redirect("auth/signin")
+    # ESTO no deberia ser necesario con el login_required.
+    # if not login_manager.isAuthorized(fromUser):
+    #     return redirect("auth/signin")
 
     toUser = user_id
     conversation = conversation_manager.startConversation(fromUser, toUser)
@@ -34,8 +34,9 @@ def chatWithUser(user_id):
 @login_required
 def chatWithGroup(group_id):
     fromUserID = session['user_id']
-    if not login_manager.isAuthorized(fromUserID):
-        return redirect("auth/signin")
+    # ESTO no deberia ser necesario con el login_required.
+    # if not login_manager.isAuthorized(fromUser):
+    #     return redirect("auth/signin")
 
     fromUser = User.query.filter(User.id == fromUserID).first()
     toGroup = Group.query.filter(Group.id == group_id).first()
