@@ -39,7 +39,7 @@
     {% endfor %}
     </div>
     {% endif %}
-    
+
     {% if not next%} {%set next = '/' %}{% endif %}
     <form method="POST" action="{{url_for('auth.signin')}}?next={{next}}"
       accept-charset="UTF-8" role="form">
@@ -49,11 +49,8 @@
                                   autofocus="", class="signin") }}
       {{ render_field(form.password, placeholder="Password",
                                   autofocus="", class="signin") }}
-      
-      <div>
-      <label>
-        <input type="checkbox" name="remember" value="1"> Remember Me {{next}}
-      </label>
+      <div style="padding-top: 15px;" >
+          {{ form.remember }} {{form.remember.label}}
       </div>
       <button type="submit" class="btn" name="submit">Sign in</button>
       <button type=button onclick="location.href=&quot;{{url_for('auth.signup')}}?next={{next}}&quot;" id="btn2">Create user</button>

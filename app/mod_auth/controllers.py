@@ -14,6 +14,7 @@ import unicodedata
 
 from app.mod_database import db
 from app import login_manager
+from flask_login import login_user, logout_user, current_user
 
 # Login Manager configuration.
 login_manager.login_view = '/auth/signin/'
@@ -21,6 +22,8 @@ login_manager.login_view = '/auth/signin/'
 @login_manager.user_loader
 def user_loader(user_id):
     user = User.query.filter_by(id=user_id).first()
+    # We are returning the db object we could make a 
+    # new logged_user object instad.
     return None if not user else user
 
 
@@ -41,6 +44,8 @@ def signin():
         user = User.query.filter(User.email == form.email.data.encode()).first()
 
         if user and user.password == form.password.data.encode():
+            login_user(user, remember=form.remember.data)
+            # Now the user is accesible via current_user
             session['user_id'] = user.id
             session['user_name'] = user.name
             return redirect(next or '/')
@@ -70,7 +75,8 @@ def signup():
             user = User(name, email, password)
             db.session.add(user)
             db.session.commit()
-
+            
+            login_user(user)
             session['user_id'] = user.id
             session['user_name'] = user.name
             return redirect(next or '/')
@@ -86,4 +92,5 @@ def signup():
 @mod_auth.route('/logout/', methods=['GET', 'POST'])
 def logout():
     session.clear()
+    logout_user()
     return redirect(url_for('auth.signin'))
