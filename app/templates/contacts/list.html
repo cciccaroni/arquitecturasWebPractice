@@ -5,8 +5,12 @@
 {% block custom_script %}
             var socket;
             $(document).ready(() => {
-                     $("[user]").click(function() {
+                $("[user]").click(function() {
                     location.href = "chat/" + this.id;
+                });
+
+                $("[group]").click(function() {
+                    location.href = "chat/group/" + this.id;
                 });
 
 
@@ -164,7 +168,7 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="grupos">
             {% for group in groups %}
-                 <a user id={{group.id}} class="list-group-item">
+                 <a group id={{group.id}} class="list-group-item">
                     <span unread_count="0" class="badge badge-primary badge-pill"></span>
                     <h4 name class="list-group-item-heading">{{group.name}}</h4>
                     <p last_received class="list-group-item-text"></p>

@@ -12,7 +12,7 @@ class MessageDTO:
 
 
 class ConversationDTO:
-    def __init__(self, conversation,fromUserID,toUserID):
+    def __init__(self, conversation, fromUserID, toUserID):
         self.id = conversation.id
         self.fromUser = UserDTO(fromUserID)
         self.toUser = UserDTO(toUserID)
@@ -37,8 +37,7 @@ class ConversationManager:
         toUser = User.query.filter(User.id == toUserID).first()
         conversations = fromUser.conversations
         users_conversation = list(
-            filter(lambda conversation: fromUser in conversation.users and toUser in conversation.users and len(conversation.users) == 2,
-                   conversations))
+            filter(lambda conversation: toUser in conversation.users, conversations))
         if not users_conversation or len(users_conversation) == 0:
             conversation = Conversation([fromUser, toUser])
             db.session.add(conversation)

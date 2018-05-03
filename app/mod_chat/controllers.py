@@ -3,7 +3,7 @@ from flask_login import login_required
 
 from werkzeug.utils import redirect
 
-from app.appModel.models import Conversation, User
+from app.appModel.models import Conversation, User, Group
 from app.mod_conversation import conversation_api, login_api
 from app.mod_conversation.conversation_api import conversation_manager
 from app.mod_conversation.login_api import login_manager
@@ -33,5 +33,21 @@ def chatWithUser(user_id):
 @mod_chat.route('/group/<group_id>', methods=['GET'])
 @login_required
 def chatWithGroup(group_id):
-    actual_user = User.query.filter(User.id == session['user_id']).first()
-    return
+    fromUserID = session['user_id']
+    if not login_manager.isAuthorized(fromUserID):
+        return redirect("auth/signin")
+
+    fromUser = User.query.filter(User.id == fromUserID).first()
+    toGroup = Group.query.filter(Group.id == group_id).first()
+    conversation = toGroup.conversation
+    if not conversation:
+        conversation = Conversation(group=toGroup)
+        db.session.add(conversation)
+        db.session.commit()
+
+
+    return render_template("chat/chat.html",
+                           chatTitle=toGroup,
+                           actual_user=fromUser,
+                           recipientsList=conversation.users,
+                           conversation=conversation)
