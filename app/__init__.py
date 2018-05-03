@@ -1,6 +1,6 @@
 # Import flask and template operators
 import os
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, current_app
 
 
 # Define the WSGI application object
@@ -8,6 +8,9 @@ from flask_socketio import SocketIO
 from flask_login import LoginManager
 
 app = Flask(__name__)
+# with app.app_context():
+#     current_app.config.appName = "BUASAAP"
+    
 socketio = SocketIO(engineio_logger=True)
 
 # Login Manager configuration.
@@ -16,7 +19,7 @@ login_manager.login_view = '/auth/signin/'
 
 # Configurations
 app.config.from_object('config')
-
+app.config.appName = "BUASAAP"
 
 # Browser static (os) favicon
 @app.route('/img/favicon.ico')
@@ -29,7 +32,6 @@ def favicon():
 @app.errorhandler(404)
 def not_found(error):
     return render_template('auth/404.html'), 404
-
 
 #init db
 from app.mod_database.database import init_db

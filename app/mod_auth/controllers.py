@@ -1,6 +1,6 @@
 # Import flask dependencies
 from flask import Blueprint, request, render_template, \
-                  flash, session, redirect, url_for
+                  flash, session, redirect, url_for, g
 
 
 # Import module forms
@@ -36,7 +36,6 @@ def signin():
         if user and user.password == form.password.data.encode():
             login_user(LoggedUser(user), remember=form.remember.data)
             # Now the user is accesible via current_user
-            # session['user_name'] = user.name
             return redirect(next or '/')
 
         else:
@@ -65,8 +64,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
             
-            login_user(user.getLoggedUser())
-            # session['user_name'] = user.name
+            login_user(LoggedUser(user))
             return redirect(next or '/')
 
         flash('Email already exists', 'error')
