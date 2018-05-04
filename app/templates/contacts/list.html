@@ -51,8 +51,6 @@
                     $("#" + userId + " [unread_count]").attr("unread_count", parseInt(unread) + 1);
                     $("#" + userId + " [unread_count]").text(parseInt(unread) + 1);
                      $("#" + userId + " [last_received]").text("");
-                    $("#" + userId + " [image]").show()
-
                 });
 
                 socket.on('status', data => {
@@ -157,14 +155,6 @@
                   </a>
               {% endfor %}
             </ul>
-            <div class="centered">
-                <p style="display: inline-block;">Hablando con</p>
-                <p style="display: inline-block;" id=conversation> Nadie</p>
-            </div>
-            <div style="display: inline-block;" class="centered">
-                <input id=msg></input>
-                <button id='send'>Send</button>
-            </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="grupos">
             {% for group in groups %}
