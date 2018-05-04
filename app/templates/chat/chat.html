@@ -39,9 +39,10 @@
 
                 socket.on('add-wavefile', function(data) {
                     // add new recording to page
-                    audio = document.createElement('p');
-                    audio.innerHTML = '<audio src="' + data.url + '" controls>';
-                    document.getElementById('wavefiles').appendChild(audio);
+                    var newMessageElement = $("<a user class='list-group-item'>")
+                    newMessageElement.append($("<h4 name class='list-group-item-heading'>" + data.from + "</h4>"))
+                    newMessageElement.append($("<audio src='" + data.url + "' controls>"))
+                    $("#chat [messages]").append(newMessageElement);
                 });
 
                 $('#text').keypress(function(e) {
