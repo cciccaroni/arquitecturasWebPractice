@@ -6,12 +6,18 @@
 
     let socket
     let recipients
+    let conversationId
+    let loggedUserName
             $(document).ready(() => {
                 recipients = [];
                 {% for user in recipientsList %}
                     var recipientId = {{user.id}};
                     recipients.push(recipientId);
                 {% endfor %}
+
+                //necesito setear estas variables a nivel java script porque la necesita el audio.js
+                conversationId = {{conversation.id}};
+                loggedUserName = '{{ actual_user.name.decode()}}';
 
                 {% for message in conversation.messages%}
                     $('#chat').val($('#chat').val() + '{{message.fromUser.name.decode()}}'+ ': '+ '{{message.payload}}' + '\n');
@@ -27,6 +33,13 @@
                 socket.on('uiTextMessage', function(data) {
                     $('#chat').val($('#chat').val() + data.from + ': '+ data.msg + '\n');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                });
+
+                socket.on('add-wavefile', function(data) {
+                    // add new recording to page
+                    audio = document.createElement('p');
+                    audio.innerHTML = '<audio src="' + data.url + '" controls>';
+                    document.getElementById('wavefiles').appendChild(audio);
                 });
 
                 $('#text').keypress(function(e) {
@@ -45,11 +58,26 @@
         {% import 'macros/macros.html' as macros %}
         {{ macros.navbar(actual_user.name.decode()) }}
 
-        <h1>Chat with: {{ chatTitle.name.decode() }}</h1>
+        <h1>Chat with: {{ chatTitle.name }}</h1>
         <textarea id="chat" cols="80" rows="20">
-            This is the beginning of your chat with {{chatTitle.name.decode()}}
+            This is the beginning of your chat with {{chatTitle.name}}
         </textarea><br><br>
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>
+        <div id="viz">
+            <div id="wavedisplay">
+                <div id="wavefiles">
+                </div>
+            </div>
+        </div>
+        <div id="controls">
+            <img id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
+        </div>
+
+
+ <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
+
+
 {% endblock %}
+
 

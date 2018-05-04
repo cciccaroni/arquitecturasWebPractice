@@ -42,3 +42,4 @@ def chatWithGroup(group_id):
                            actual_user=current_user,
                            recipientsList=conversation.group.users,
                            conversation=conversation)
+

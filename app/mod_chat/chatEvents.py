@@ -1,7 +1,8 @@
-from flask import session
+from flask import session, url_for
 from flask_socketio import join_room, emit
-
-from app import socketio
+import wave
+import uuid
+from app import socketio, app
 from app.appModel.models import User
 from app.mod_conversation.conversation_api import conversation_manager
 
@@ -46,6 +47,36 @@ def textMessage(json):
     for recipient in eval(json['toIds']):
         emit('uiTextMessage', status, room=recipient)
     print("mensaje enviado a los miembros del chat")
+
+@socketio.on('start-recording', namespace='/chat')
+def start_recording(options):
+    """Start recording audio from the client."""
+    id = uuid.uuid4().hex  # server-side filename
+    session['wavename'] = id + '.wav'
+    wf = wave.open(app.config['FILEDIR'] + session['wavename'], 'wb')
+    wf.setnchannels(options.get('numChannels', 1))
+    wf.setsampwidth(options.get('bps', 16) // 8)
+    wf.setframerate(options.get('fps', 44100))
+    session['wavefile'] = wf
+
+
+@socketio.on('write-audio', namespace='/chat')
+def write_audio(data):
+    """Write a chunk of audio from the client."""
+    session['wavefile'].writeframes(data)
+
+
+@socketio.on('end-recording', namespace='/chat')
+def end_recording(recipients, conversationId, loggedUserName):
+    """Stop recording audio from the client."""
+    status = {'url': url_for('static', filename='_files/' + session['wavename']), 'from': loggedUserName}
+    for recipient in recipients:
+        emit('add-wavefile', status, room=recipient)
+    session['wavefile'].close()
+    del session['wavefile']
+    del session['wavename']
+
+
 
 
 
