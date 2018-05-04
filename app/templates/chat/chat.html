@@ -19,11 +19,6 @@
                 conversationId = {{conversation.id}};
                 loggedUserName = '{{ actual_user.name.decode()}}';
 
-                {% for message in conversation.messages%}
-                    $('#chat').val($('#chat').val() + '{{message.fromUser.name.decode()}}'+ ': '+ '{{message.payload}}' + '\n');
-                {% endfor %}
-                $('#chat').scrollTop($('#chat')[0].scrollHeight);
-
                 socket = io.connect('http://' + location.host + '/chat');
 
                 socket.on('connect', function() {
@@ -34,7 +29,15 @@
                     var newMessageElement = $("<a user class='list-group-item'>")
                     newMessageElement.append($("<h4 name class='list-group-item-heading'>" + data.from + "</h4>"))
                     newMessageElement.append($("<p text class='list-group-item-text'>" + data.msg + "</p>"))
+                    var isLoggedUserMessage = data.from == '{{actual_user.name.decode()}}';
+
+                    if (isLoggedUserMessage)
+                    {
+                        newMessageElement.addClass("loggedUserMessage");
+                    }
+
                     $("#chat [messages]").append(newMessageElement);
+                    $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
                 });
 
                 socket.on('add-wavefile', function(data) {
@@ -42,7 +45,15 @@
                     var newMessageElement = $("<a user class='list-group-item'>")
                     newMessageElement.append($("<h4 name class='list-group-item-heading'>" + data.from + "</h4>"))
                     newMessageElement.append($("<audio src='" + data.url + "' controls>"))
+                    var isLoggedUserMessage = data.from == '{{actual_user.name.decode()}}';
+
+                    if (isLoggedUserMessage)
+                    {
+                        newMessageElement.addClass("loggedUserMessage");
+                    }
+
                     $("#chat [messages]").append(newMessageElement);
+                    $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
                 });
 
                 $('#text').keypress(function(e) {
@@ -53,6 +64,8 @@
                         socket.emit('textMessage', {msg: text, toIds: JSON.stringify(recipients), conversationId:{{conversation.id}}, fromName: '{{ actual_user.name.decode()}}' });
                     }
                 });
+
+                $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
             });
 {% endblock %}
 
@@ -64,33 +77,36 @@
         <h1>Chat with: {{ chatTitle.name }}</h1>
 
 
-        <div role="tabpanel" class="tab-pane active" id="chat">
-            <ul messages class="list-group">
-                {% for message in conversation.messages%}
-                  <a user class="list-group-item">
-                    <h4 name class="list-group-item-heading">{{message.fromUser.name.decode()}}</h4>
-                    <p text class="list-group-item-text">{{message.payload}}</p>
-                  </a>
-                {% endfor %}
-            </ul>
-        </div>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-md-8">
+                    <div role="tabpanel" class="tab-pane active" id="chat">
+                        <ul messages class="list-group">
+                            {% for message in conversation.messages%}
+                              <a user class='list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name.decode() == actual_user.name.decode()) else ''}}'>
+                                <h4 name class="list-group-item-heading">{{message.fromUser.name.decode()}}</h4>
+                                <p text class="list-group-item-text">{{message.payload}}</p>
+                              </a>
+                            {% endfor %}
+                        </ul>
+                    </div>
 
-        <input id="text" size="80" placeholder="Enter your message here"><br><br>
-        <a href="#" >Leave this room(TODO: redirect to chat list)</a>
-        <div id="viz">
-            <div id="wavedisplay">
-                <div id="wavefiles">
                 </div>
+                <div class="col-md-4">
+                    <div id="controls">
+                        <img id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
+                    </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-8">
+                     <input id="text" size="80" placeholder="Enter your message here">
+                </div>
+                <div class="col-md-4">
+                </div>
+              </div>
             </div>
-        </div>
-        <div id="controls">
-            <img id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
-        </div>
-
-
- <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
-
-
+        <a style="display:none" href="#" >Leave this room(TODO: redirect to chat list)</a>
 {% endblock %}
 
 
