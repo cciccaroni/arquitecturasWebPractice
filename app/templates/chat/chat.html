@@ -26,34 +26,11 @@
                 });
 
                 socket.on('uiTextMessage', function(data) {
-                    var newMessageElement = $("<a user class='list-group-item'>")
-                    newMessageElement.append($("<h4 name class='list-group-item-heading'>" + data.from + "</h4>"))
-                    newMessageElement.append($("<p text class='list-group-item-text'>" + data.msg + "</p>"))
-                    var isLoggedUserMessage = data.from == '{{actual_user.name.decode()}}';
-
-                    if (isLoggedUserMessage)
-                    {
-                        newMessageElement.addClass("loggedUserMessage");
-                    }
-
-                    $("#chat [messages]").append(newMessageElement);
-                    $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
+                    appendNewMessage($("<p text class='list-group-item-text'>" + data.msg + "</p>"), data.from);
                 });
 
                 socket.on('add-wavefile', function(data) {
-                    // add new recording to page
-                    var newMessageElement = $("<a user class='list-group-item'>")
-                    newMessageElement.append($("<h4 name class='list-group-item-heading'>" + data.from + "</h4>"))
-                    newMessageElement.append($("<audio src='" + data.url + "' controls>"))
-                    var isLoggedUserMessage = data.from == '{{actual_user.name.decode()}}';
-
-                    if (isLoggedUserMessage)
-                    {
-                        newMessageElement.addClass("loggedUserMessage");
-                    }
-
-                    $("#chat [messages]").append(newMessageElement);
-                    $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
+                    appendNewMessage($("<audio src='" + data.url + "' controls>"), data.from);
                 });
 
                 $('#text').keypress(function(e) {
@@ -66,6 +43,24 @@
                 });
 
                 $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
+
+
+
+                function appendNewMessage(element, from){
+                        var newMessageElement = $("<a user class='list-group-item'>")
+                        newMessageElement.append($("<h4 name class='list-group-item-heading'>" + from + "</h4>"))
+                        newMessageElement.append(element)
+                        var isLoggedUserMessage = from == '{{actual_user.name.decode()}}';
+
+                        if (isLoggedUserMessage)
+                        {
+                            newMessageElement.addClass("loggedUserMessage");
+                        }
+
+                        $("#chat [messages]").append(newMessageElement);
+                        $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
+                }
+
             });
 {% endblock %}
 
@@ -107,6 +102,7 @@
               </div>
             </div>
         <a style="display:none" href="#" >Leave this room(TODO: redirect to chat list)</a>
+        <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
 {% endblock %}
 
 
