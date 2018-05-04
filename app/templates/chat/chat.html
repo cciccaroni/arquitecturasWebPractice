@@ -31,8 +31,10 @@
                 });
 
                 socket.on('uiTextMessage', function(data) {
-                    $('#chat').val($('#chat').val() + data.from + ': '+ data.msg + '\n');
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                    var newMessageElement = $("<a user class='list-group-item'>")
+                    newMessageElement.append($("<h4 name class='list-group-item-heading'>" + data.from + "</h4>"))
+                    newMessageElement.append($("<p text class='list-group-item-text'>" + data.msg + "</p>"))
+                    $("#chat [messages]").append(newMessageElement);
                 });
 
                 socket.on('add-wavefile', function(data) {
@@ -59,9 +61,19 @@
         {{ macros.navbar(actual_user.name.decode()) }}
 
         <h1>Chat with: {{ chatTitle.name }}</h1>
-        <textarea id="chat" cols="80" rows="20">
-            This is the beginning of your chat with {{chatTitle.name}}
-        </textarea><br><br>
+
+
+        <div role="tabpanel" class="tab-pane active" id="chat">
+            <ul messages class="list-group">
+                {% for message in conversation.messages%}
+                  <a user class="list-group-item">
+                    <h4 name class="list-group-item-heading">{{message.fromUser.name.decode()}}</h4>
+                    <p text class="list-group-item-text">{{message.payload}}</p>
+                  </a>
+                {% endfor %}
+            </ul>
+        </div>
+
         <input id="text" size="80" placeholder="Enter your message here"><br><br>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>
         <div id="viz">
