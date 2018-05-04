@@ -30,7 +30,7 @@
                 });
 
                 socket.on('add-wavefile', function(data) {
-                    appendNewMessage($("<audio src='" + data.url + "' />"), data.from);
+                    appendNewMessage($("<audio src='" + data.url + "' controls>"), data.from);
                 });
 
                 socket.on('image', data => {
@@ -129,13 +129,13 @@
                             {% endfor %}
                         </ul>
                     </div>
-
                 </div>
                 <div class="col-md-4">
-                    <div id="controls">
-                        <img id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
+                    <div class="row">
+                         <img id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
+                         <img id="imageIcon" height="100" width="100" src="{{ url_for('static', filename='img/image_icon.jpg') }}" onclick="$('#file').click()">
+
                     </div>
-                </div>
               </div>
               <div class="row">
                 <div class="col-md-8">
@@ -146,7 +146,7 @@
               </div>
             </div>
         <a href="#" >Leave this room(TODO: redirect to chat list)</a>
-        <input type="file" id="file" name="file">
+        <input style="display:none" type="file" id="file" name="file">
         <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
 {% endblock %}
 
