@@ -88,5 +88,3 @@ function encode (input) {
 function scrollDownChat(){
     $("#chat").scrollTop($("#chat [messages]").height());
 }
-
-

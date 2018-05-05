@@ -3,7 +3,7 @@
 {% block title %} Chat with {{ chatTitle }}{% endblock %}
 
 {% block specific_includes %}
-        <!--<script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>-->
+        <!-- <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script> -->
         <script src="{{ url_for('static', filename='javascript/chat.js') }}"></script>
 {%endblock%}
 
@@ -29,7 +29,21 @@
 {% import 'macros/macros.html' as macros %}
 {{ macros.navbar(actual_user.name.decode()) }}
 
-<h1>Chat with: {{ chatTitle }}</h1>
+<div class="row">
+  <div class="col-md-2">
+    <img class="icono" src="{{ url_for('static', filename='img/back_icon.jpeg') }}" onclick="window.location.href = '/';">
+  </div>
+  <div class="col-md-4">
+    <h1 >Chat with: {{ chatTitle }}</h1>
+  </div>
+  <div class="col-md-1">
+      <img class="icono" id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
+    </div>
+    <div class="col-md-1">
+      <img class="icono" id="imageIcon" height="100" width="100" src="{{ url_for('static', filename='img/image_icon.jpg') }}" onclick="$('#file').click()">
+  </div>
+</div>
+<hr>
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-8">
@@ -54,12 +68,6 @@
             </ul>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="row">
-             <img id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
-             <img id="imageIcon" height="100" width="100" src="{{ url_for('static', filename='img/image_icon.jpg') }}" onclick="$('#file').click()">
-        </div>
-    </div>
   </div>
   <div class="row">
     <div class="col-md-12">
@@ -67,7 +75,6 @@
     </div>
   </div>
 </div>
-<a style="display:none" href="#" >Leave this room(TODO: redirect to chat list)</a>
 <input style="display:none" type="file" id="file" name="file">
 <input id="loggedUserName" type="hidden" value="{{actual_user.name.decode()}}">
 <input id="conversationId" type="hidden" value="{{conversation.id}}">
