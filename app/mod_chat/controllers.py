@@ -15,14 +15,13 @@ mod_chat = Blueprint('chat', __name__, url_prefix='/chat', template_folder='../t
 def chatWithUser(user_id):
     fromUser = session['user_id']
     toUser = user_id
-    
+
     conversation = conversation_manager.startConversation(fromUser, toUser)
 
     return render_template("chat.html",
-                           chatTitle=conversation.toUser,
-                          #  actual_user=conversation.fromUser,
+                           chatTitle=conversation.title,
                            actual_user=current_user,
-                           recipientsList=[conversation.toUser,conversation.fromUser],
+                           recipientsList=conversation.recipientList,
                            conversation=conversation)
 
 
@@ -30,16 +29,12 @@ def chatWithUser(user_id):
 @mod_chat.route('/group/<group_id>', methods=['GET'])
 @login_required
 def chatWithGroup(group_id):
-    toGroup = Group.query.filter(Group.id == group_id).first()
-    conversation = toGroup.conversation
-    if not conversation:
-        conversation = Conversation(group=toGroup)
-        db.session.add(conversation)
-        db.session.commit()
+
+    conversation = conversation_manager.startGroupConversation(group_id)
 
     return render_template("chat.html",
-                           chatTitle=toGroup,
+                           chatTitle=conversation.title,
                            actual_user=current_user,
-                           recipientsList=conversation.group.users,
+                           recipientsList=conversation.recipientList,
                            conversation=conversation)
 

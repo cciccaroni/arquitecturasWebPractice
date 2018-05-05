@@ -59,6 +59,12 @@ class Conversation(db.Model):
     def __repr__(self):
         return '<Conversation %r>' % (self.id)
 
+    def obtainUsersInConversation(self):
+        if not self.group:
+            return self.users
+        else:
+            return self.group.users
+
 
 class Message(db.Model):
     __tablename__ = 'message'

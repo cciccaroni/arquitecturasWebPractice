@@ -13,19 +13,20 @@ class MessageDTO:
 
 
 class ConversationDTO:
-    def __init__(self, conversation, fromUserID, toUserID):
+    def __init__(self, conversation, title):
         self.id = conversation.id
-        self.fromUser = UserDTO(fromUserID)
-        self.toUser = UserDTO(toUserID)
+        self.title = title
+        self.recipientList = list(map(lambda user: UserDTO(user.id),conversation.obtainUsersInConversation()))
         self.messages = list(map(lambda message: MessageDTO(message.user_id, message.message, message.type),list(conversation.messages)))
 
 
 class EmptyConversationDTO:
-    def __init__(self, conversation,fromUserID, toUserID):
+    def __init__(self, conversation,title):
         self.id = conversation.id
-        self.fromUser = UserDTO(fromUserID)
-        self.toUser = UserDTO(toUserID)
+        self.title = title
         self.messages = []
+        self.recipientList = list(map(lambda user: UserDTO(user.id),conversation.obtainUsersInConversation()))
+
 
 
 class ConversationManager:
@@ -36,19 +37,41 @@ class ConversationManager:
     def startConversation(self, fromUserID, toUserID):
         fromUser = User.query.filter(User.id == fromUserID).first()
         toUser = User.query.filter(User.id == toUserID).first()
+        users_conversation = self.conversationBetweenUsers(fromUser, toUser)
+        if not users_conversation or len(users_conversation) == 0:
+            return self.createNewConversation(fromUser, toUser)
+        else:
+            return ConversationDTO(users_conversation[0], toUser.name)
+
+    def startGroupConversation(self, groupID):
+        group = Group.query.filter(Group.id == groupID).first()
+        conversation = group.conversation
+        if not conversation:
+            return self.createNewGroupConversation(group)
+        else:
+            return ConversationDTO(conversation, group.name)
+
+    def createNewGroupConversation(self, group):
+        conversation = Conversation(group=group)
+        db.session.add(conversation)
+        db.session.flush()
+        new_conversation = EmptyConversationDTO(conversation, group.name)
+        db.session.commit()
+        return new_conversation
+
+    def createNewConversation(self, fromUser, toUser):
+        conversation = Conversation([fromUser, toUser])
+        db.session.add(conversation)
+        db.session.flush()
+        new_conversation = EmptyConversationDTO(conversation, toUser.name)
+        db.session.commit()
+        return new_conversation
+
+    def conversationBetweenUsers(self, fromUser, toUser):
         conversations = fromUser.conversations
         users_conversation = list(
             filter(lambda conversation: toUser in conversation.users, conversations))
-        if not users_conversation or len(users_conversation) == 0:
-            conversation = Conversation([fromUser, toUser])
-            db.session.add(conversation)
-            db.session.flush()
-            new_conversation = EmptyConversationDTO(conversation, fromUser.id, toUser.id)
-            db.session.commit()
-            return new_conversation
-        else:
-
-            return ConversationDTO(users_conversation[0], fromUser.id, toUser.id)
+        return users_conversation
 
     #TODO: improve error conditions when the userid doesnt match with the conversation
     def log_message(self,fromUserID,message,conversationID, type):
