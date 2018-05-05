@@ -33,7 +33,7 @@ function appendNewMessage(element, from){
     }
 
     $("#chat [messages]").append(newMessageElement);
-    $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
+    scrollDownChat();
 }
 
 function setUIEventHandlers(){
@@ -85,5 +85,8 @@ function encode (input) {
     return output;
 }
 
+function scrollDownChat(){
+    $("#chat").scrollTop($("#chat [messages]").height());
+}
 
 

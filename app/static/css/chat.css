@@ -53,8 +53,8 @@
     text-align : right;
 }
 
-.list-group{
-    max-height: 500px;
+#chat{
+    height: 400px;
     overflow-y:scroll;
 }
 
