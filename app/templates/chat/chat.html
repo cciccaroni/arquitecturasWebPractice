@@ -3,15 +3,13 @@
 {% block title %} Chat with {{ chatTitle }}{% endblock %}
 
 {% block specific_includes %}
-        <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
-        <script src="{{ url_for('static', filename='javascript/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
+<script src="{{ url_for('static', filename='javascript/chat.js') }}"></script>
 {%endblock%}
 
 {% block custom_script %}
-    let socket
-    let recipients
-    let conversationId
-    let loggedUserName
+    var socket;
+    var recipients;
     $(document).ready(() => {
         recipients = [];
         {% for user in recipientsList %}
@@ -20,7 +18,7 @@
         {% endfor %}
         initializeSocket();
         setUIEventHandlers();
-        $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER);
+        scrollDownChat();
     });
 {% endblock %}
 
@@ -71,6 +69,7 @@
 <input style="display:none" type="file" id="file" name="file">
 <input id="loggedUserName" type="hidden" value="{{actual_user.name.decode()}}">
 <input id="conversationId" type="hidden" value="{{conversation.id}}">
+
 {% endblock %}
 
 

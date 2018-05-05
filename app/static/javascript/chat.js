@@ -33,7 +33,7 @@ function appendNewMessage(element, from){
     }
 
     $("#chat [messages]").append(newMessageElement);
-    $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER)
+    scrollDownChat();
 }
 
 function setUIEventHandlers(){
@@ -58,6 +58,11 @@ function setUIEventHandlers(){
         }
     });
 }
+
+function scrollDownChat(){
+    $("#chat").scrollTop($("#chat [messages]").height());
+}
+
 function encode (input) {
     var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     var output = "";
