@@ -111,4 +111,3 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
     status = {'image': image, 'from': loggedUserName}
     for recipient in recipients:
         emit('image', status, room=recipient)
-

@@ -15,7 +15,7 @@ function toggleRecording( e ) {
         // stop recording
         e.classList.remove('recording');
         recording = false;
-        socketio.emit('end-recording', recipients, conversationId, loggedUserName);
+        socketio.emit('end-recording', recipients, $("#conversationId").val(), $("#loggedUserName").val());
     } else {
         // start recording
         e.classList.add('recording');
