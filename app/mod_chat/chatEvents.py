@@ -2,9 +2,10 @@ from flask import session, url_for
 from flask_socketio import join_room, emit
 import wave
 import uuid
-from app import socketio, app
+from app import socketio
 from app.appModel.models import User
 from app.mod_conversation.conversation_api import conversation_manager
+from config import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
 
 
 @socketio.on('joined', namespace='/chat')
@@ -39,7 +40,6 @@ def textMessage(text, recipients, conversationId, loggedUserName):
     if not my_user:
         return
 
-    #TODO: armar un chat_manager que tenga el conversation_manager adentro
     conversation_manager.log_message(user_id, text, conversationId, "text")
 
     status = {'msg': text, 'from': loggedUserName}
@@ -47,12 +47,13 @@ def textMessage(text, recipients, conversationId, loggedUserName):
         emit('uiTextMessage', status, room=recipient)
     print("mensaje enviado a los miembros del chat")
 
+
 @socketio.on('start-recording', namespace='/chat')
 def start_recording(options):
     """Start recording audio from the client."""
     id = uuid.uuid4().hex  # server-side filename
     session['wavename'] = id + '.wav'
-    wf = wave.open(app.config['AUDIO_FILEDIR'] + session['wavename'], 'wb')
+    wf = wave.open(APPLICATION_PATH + APPLICATION_AUDIOS_PATH + session['wavename'], 'wb')
     wf.setnchannels(options.get('numChannels', 1))
     wf.setsampwidth(options.get('bps', 16) // 8)
     wf.setframerate(options.get('fps', 44100))
@@ -102,12 +103,12 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
         return
 
     id = uuid.uuid4().hex  # server-side filename
-    filePath = app.config['IMAGE_FILEDIR'] + id + '.png'
-    f = open(filePath, 'wb')
+    file_relative_path = APPLICATION_IMAGES_PATH + id + '.png'
+    f = open(APPLICATION_PATH + file_relative_path, 'wb')
     f.write(image)
 
-    conversation_manager.log_message(user_id, id + '.png', conversationId, "image")
+    conversation_manager.log_message(user_id, file_relative_path, conversationId, "image")
 
-    status = {'image': image, 'from': loggedUserName}
+    status = {'imagePath': file_relative_path, 'from': loggedUserName}
     for recipient in recipients:
-        emit('image', status, room=recipient)
+        emit('uiImageMessage', status, room=recipient)

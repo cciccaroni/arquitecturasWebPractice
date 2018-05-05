@@ -3,7 +3,6 @@
 {% block title %} Chat with {{ chatTitle }}{% endblock %}
 
 {% block specific_includes %}
-        <!--<script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>-->
         <script src="{{ url_for('static', filename='javascript/chat.js') }}"></script>
 {%endblock%}
 
@@ -47,7 +46,7 @@
                         </audio>
                     {% endif %}
                     {% if message.type == 'image' %}
-                        <img src='/static/_files/image/{{message.payload}}' />
+					    <img src='{{message.payload}}' style="max-height: 240px; max-width: 240px;">
                     {% endif %}
                   </a>
                 {% endfor %}
