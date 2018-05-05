@@ -20,7 +20,7 @@
         {% endfor %}
         initializeSocket();
         setUIEventHandlers();
-        $("#chat [messages]").scrollTop(Number.MAX_SAFE_INTEGER);
+        scrollDownChat();
     });
 {% endblock %}
 
