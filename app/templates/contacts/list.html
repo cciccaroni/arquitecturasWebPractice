@@ -1,3 +1,4 @@
+
 {% extends 'base/base.html' %}
 
 {% block title %} Index {% endblock %}
@@ -6,32 +7,68 @@
     {% import 'macros/macros.html' as macros %}
     {{ macros.navbar(actual_user.name.decode()) }}
 
-    <ul id="myTabs" class="nav nav-tabs">
-      <li role="presentation" class="active"><a href="#usuarios">Usuarios</a></li>
-      <li role="presentation"><a href="#grupos">Grupos</a></li>
-    </ul>
+<ul id="myTabs" class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="#usuarios">Usuarios</a></li>
+    <li role="presentation"><a href="#grupos">Grupos</a></li>
+</ul>
 
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="usuarios">
-            <ul class="list-group">
-              {% for user in users %}
-                  <a user id={{user.id}} class="list-group-item">
-                    <span unread_count="0" class="badge badge-primary badge-pill"></span>
-                    <h4 name class="list-group-item-heading">{{user.name}}</h4>
-                    <p last_received class="list-group-item-text"></p>
-                  </a>
-              {% endfor %}
-            </ul>
-        </div>
-        <div role="tabpanel" class="tab-pane" id="grupos">
-            {% for group in groups %}
-                 <a group id={{group.id}} class="list-group-item">
-                    <span unread_count="0" class="badge badge-primary badge-pill"></span>
-                    <h4 name class="list-group-item-heading">{{group.name}}</h4>
-                    <p last_received class="list-group-item-text"></p>
-                 </a>
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="usuarios">
+        <ul class="list-group">
+            {% for user in users %}
+            <a user id={{user.id}} class="list-group-item">
+                <span unread_count="0" class="badge badge-primary badge-pill"></span>
+                <h4 name class="list-group-item-heading">{{user.name}}</h4>
+                <p last_received class="list-group-item-text"></p>
+            </a>
             {% endfor %}
+        </ul>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="grupos">
+        {% for group in groups %}
+        <a group id={{group.id}} class="list-group-item">
+            <span unread_count="0" class="badge badge-primary badge-pill"></span>
+            <h4 name class="list-group-item-heading">{{group.name}}</h4>
+            <p last_received class="list-group-item-text"></p>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Crear grupo
+</button>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="form" name="addGroup" action="/addGroup" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Crear grupo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="group_name" type="text" class="form-control" placeholder="Nombre del grupo">
+                    {% for user in users %}
+                    <div class="form-check">
+                        <input id="cgroup_{{user.id}}" class="form-check-input" type="checkbox" value=""
+                               id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                            {{user.name}}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input id="create_group" type="submit" class="btn btn-primary" value="Crear grupo"/>
+                </div>
+            </form>
         </div>
     </div>
+</div>
     <script src="{{ url_for('static', filename='javascript/list.js') }}"></script>
 {% endblock %}
