@@ -67,11 +67,13 @@ class Message(db.Model):
     message = db.Column(db.String(128), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'))
+    type = db.Column(db.String(128), default='text')
 
-    def __init__(self, message, user_id, conversation_id):
+    def __init__(self, message, user_id, conversation_id, type):
         self.message = message
         self.user_id = user_id
         self.conversation_id = conversation_id
+        self.type = type
 
     def __repr__(self):
         return '<Message %r>' % (self.message)

@@ -124,7 +124,15 @@
                             {% for message in conversation.messages%}
                               <a user class='list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name.decode() == actual_user.name.decode()) else ''}}'>
                                 <h4 name class="list-group-item-heading">{{message.fromUser.name.decode()}}</h4>
-                                <p text class="list-group-item-text">{{message.payload}}</p>
+                                {% if message.type == 'text' %}
+                                    <p text class="list-group-item-text">{{message.payload}}</p>
+                                {% endif %}
+                                {% if message.type == 'audio' %}
+                                    <audio src='/static/_files/audio/{{message.payload}}' controls>
+                                {% endif %}
+                               {% if message.type == 'image' %}
+                                    <img src='/static/_files/image/{{message.payload}}' />
+                                {% endif %}
                               </a>
                             {% endfor %}
                         </ul>

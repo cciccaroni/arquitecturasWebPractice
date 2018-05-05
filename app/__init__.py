@@ -21,7 +21,8 @@ login_manager.login_view = '/auth/signin/'
 app.config.from_object('config')
 app.config.appName = "BUASAAP"
 
-app.config['FILEDIR'] = 'app/static/_files/'
+app.config['IMAGE_FILEDIR'] = 'app/static/_files/image/'
+app.config['AUDIO_FILEDIR'] = 'app/static/_files/audio/'
 
 # Browser static (os) favicon
 @app.route('/img/favicon.ico')

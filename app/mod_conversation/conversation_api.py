@@ -6,9 +6,10 @@ class UserDTO:
         self.name = User.query.filter(User.id == userID).first().name
 
 class MessageDTO:
-    def __init__(self, fromUserID,message):
+    def __init__(self, fromUserID,message, type):
         self.fromUser = UserDTO(fromUserID)
         self.payload = message
+        self.type = type
 
 
 class ConversationDTO:
@@ -16,7 +17,7 @@ class ConversationDTO:
         self.id = conversation.id
         self.fromUser = UserDTO(fromUserID)
         self.toUser = UserDTO(toUserID)
-        self.messages = list(map(lambda message: MessageDTO(message.user_id,message.message),list(conversation.messages)))
+        self.messages = list(map(lambda message: MessageDTO(message.user_id, message.message, message.type),list(conversation.messages)))
 
 
 class EmptyConversationDTO:
@@ -50,7 +51,7 @@ class ConversationManager:
             return ConversationDTO(users_conversation[0], fromUser.id, toUser.id)
 
     #TODO: improve error conditions when the userid doesnt match with the conversation
-    def log_message(self,fromUserID,message,conversationID):
+    def log_message(self,fromUserID,message,conversationID, type):
         fromUser = User.query.filter(User.id == fromUserID).first()
         if not fromUser:
             return
@@ -59,7 +60,7 @@ class ConversationManager:
         if fromUser not in conversation.users and fromUser not in conversation.group.users:
             return
 
-        new_message = Message(message,fromUserID,conversationID)
+        new_message = Message(message,fromUserID,conversationID, type)
         db.session.add(new_message)
         conversation.messages.append(new_message)
         db.session.commit()

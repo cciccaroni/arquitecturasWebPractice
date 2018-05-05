@@ -40,7 +40,7 @@ def textMessage(text, recipients, conversationId, loggedUserName):
         return
 
     #TODO: armar un chat_manager que tenga el conversation_manager adentro
-    conversation_manager.log_message(user_id, text, conversationId)
+    conversation_manager.log_message(user_id, text, conversationId, "text")
 
     status = {'msg': text, 'from': loggedUserName}
     for recipient in recipients:
@@ -52,7 +52,7 @@ def start_recording(options):
     """Start recording audio from the client."""
     id = uuid.uuid4().hex  # server-side filename
     session['wavename'] = id + '.wav'
-    wf = wave.open(app.config['FILEDIR'] + session['wavename'], 'wb')
+    wf = wave.open(app.config['AUDIO_FILEDIR'] + session['wavename'], 'wb')
     wf.setnchannels(options.get('numChannels', 1))
     wf.setsampwidth(options.get('bps', 16) // 8)
     wf.setframerate(options.get('fps', 44100))
@@ -68,10 +68,20 @@ def write_audio(data):
 @socketio.on('end-recording', namespace='/chat')
 def end_recording(recipients, conversationId, loggedUserName):
     """Stop recording audio from the client."""
-    status = {'url': url_for('static', filename='_files/' + session['wavename']), 'from': loggedUserName}
+
+    user_id = session.get('user_id', None)
+    if not user_id:
+        return
+
+    my_user = User.query.get(user_id)
+    if not my_user:
+        return
+
+    status = {'url': url_for('static', filename='_files/audio/' + session['wavename']), 'from': loggedUserName}
     for recipient in recipients:
         emit('add-wavefile', status, room=recipient)
     session['wavefile'].close()
+    conversation_manager.log_message(user_id, session['wavename'], conversationId, "audio")
     del session['wavefile']
     del session['wavename']
 
@@ -82,6 +92,22 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
       Se envia un evento tanto al emisor como al destinatario
       (emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
     """
+
+    user_id = session.get('user_id', None)
+    if not user_id:
+        return
+
+    my_user = User.query.get(user_id)
+    if not my_user:
+        return
+
+    id = uuid.uuid4().hex  # server-side filename
+    filePath = app.config['IMAGE_FILEDIR'] + id + '.png'
+    f = open(filePath, 'wb')
+    f.write(image)
+
+    conversation_manager.log_message(user_id, id + '.png', conversationId, "image")
+
     status = {'image': image, 'from': loggedUserName}
     for recipient in recipients:
         emit('image', status, room=recipient)
