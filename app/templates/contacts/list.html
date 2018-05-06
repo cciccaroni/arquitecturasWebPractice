@@ -5,7 +5,7 @@
 
 {% block body %}
     {% import 'macros/macros.html' as macros %}
-    {{ macros.navbar(actual_user.name.decode()) }}
+    {{ macros.navbar(actual_user.name) }}
     {% macro render_field(field, placeholder=None) %}
     {% if field.errors %}
     <div>

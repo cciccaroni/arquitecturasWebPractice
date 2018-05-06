@@ -29,7 +29,7 @@
 {% block body %}
 
 {% import 'macros/macros.html' as macros %}
-{{ macros.navbar(actual_user.name.decode()) }}
+{{ macros.navbar(actual_user.name) }}
 
 <div class="row">
   <div class="col-md-2">
@@ -52,8 +52,8 @@
         <div role="tabpanel" class="tab-pane active" id="chat">
             <ul messages class="list-group">
                 {% for message in conversation.messages%}
-                  <a user class='list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name.decode() == actual_user.name.decode()) else ''}}'>
-                    <h4 name class="list-group-item-heading">{{message.fromUser.name.decode()}}</h4>
+                  <a user class='list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name == actual_user.name) else ''}}'>
+                    <h4 name class="list-group-item-heading">{{message.fromUser.name}}</h4>
                     {% if message.type == 'text' %}
                         <p text class="list-group-item-text">{{message.payload}}</p>
                     {% endif %}
@@ -78,7 +78,7 @@
   </div>
 </div>
 <input style="display:none" type="file" id="file" name="file" accept="image/x-png,image/gif,image/jpeg" >
-<input id="loggedUserName" type="hidden" value="{{actual_user.name.decode()}}">
+<input id="loggedUserName" type="hidden" value="{{actual_user.name}}">
 <input id="conversationId" type="hidden" value="{{conversation.id}}">
 <script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
 {% endblock %}

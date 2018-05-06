@@ -31,9 +31,9 @@ def signin():
     
     # Verify the sign in form
     if form.validate_on_submit():
-        user = User.query.filter(User.email == form.email.data.encode()).first()
+        user = User.query.filter(User.email == form.email.data).first()
 
-        if user and user.password == form.password.data.encode():
+        if user and user.password == form.password.data:
             login_user(LoggedUser(user), remember=form.remember.data)
             # Now the user is accesible via current_user
             return redirect(next or '/')
@@ -55,11 +55,11 @@ def signup():
 
     # Verify the sign in form
     if form.validate_on_submit():
-        user = User.query.filter(User.email == form.email.data.encode()).first()
+        user = User.query.filter(User.email == form.email.data).first()
         if not user:
-            email = unicodedata.normalize('NFKD', form.email.data).encode('ascii', 'ignore')
-            name = unicodedata.normalize('NFKD', form.name.data).encode('ascii', 'ignore')
-            password = unicodedata.normalize('NFKD', form.password.data).encode('ascii', 'ignore')
+            email = form.email.data
+            name = form.name.data
+            password = form.password.data
             user = User(name, email, password)
             db.session.add(user)
             db.session.commit()
