@@ -20,7 +20,7 @@ $(document).ready(() => {
   let socket;
   let conversation = []
   $(document).ready(() => {
-      socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+      socket = io.connect('https://' + document.domain + ':' + location.port + '/chat');
       socket.on('connect', () => {
           socket.emit('joined', {});
       });
