@@ -23,7 +23,7 @@ def addGroup():
     form.set_members(friends)
     
     if form.validate_on_submit():
-        name = unicodedata.normalize('NFKD', form.name.data).encode('ascii', 'ignore')
+        name = form.name.data
         members = form.members.data + [current_user.id]
         users = User.query.filter(User.id.in_(members)).all()
 
