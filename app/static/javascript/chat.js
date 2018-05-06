@@ -70,3 +70,5 @@ function scrollDownChat(){
     $("#chat").scrollTop($("#chat [messages]").height());
 }
 
+
+
