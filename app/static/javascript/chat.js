@@ -15,8 +15,11 @@ function initializeSocket(){
 
     socket.on('uiImageMessage', data => {
         var from = data.loggedUserName;
-        var imagePath = data.imagePath;
-        appendNewMessage($("<img src='" + imagePath + "' style=\"max-height: 240px; max-width: 240px;\">"), data.from);
+        var imageElement = new Image();
+        imageElement.src = data.imagePath;
+        imageElement.style = "max-height: 240px; max-width: 240px;"
+        imageElement.onload = function() { scrollDownChat(); }
+        appendNewMessage(imageElement, data.from);
     });
 }
 
