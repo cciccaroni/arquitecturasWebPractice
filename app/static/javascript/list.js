@@ -25,18 +25,26 @@ function initializeSocket(){
     });
 
     socket.on('uiTextMessage', function(data) {
-        alert(data.from + " te mando un mensaje");
+        alert(getFromText(data) + " te mando un mensaje");
     });
 
     socket.on('uiAudioMessage', function(data) {
-        alert(data.from + " alguien te mando un audio");
+        alert(getFromText(data) + " te mando un audio");
     });
 
     socket.on('uiImageMessage', data => {
-        alert(data.from + " alguien te mando una imagen");
+        alert(getFromText(data) + " te mando una imágen");
     });
 }
 
+
+function getFromText(data){
+    var fromText = data.from;
+    if(data.group != null){
+        fromText = data.from + ' del grupo *' + data.group + '*';
+    }
+    return fromText;
+}
 
 
 
