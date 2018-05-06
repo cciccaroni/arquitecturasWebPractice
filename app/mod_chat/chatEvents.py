@@ -1,11 +1,10 @@
-from flask import session, url_for
+from flask import session
 from flask_socketio import join_room, emit
-import wave
 import uuid
 from app import socketio
 from app.appModel.models import User
 from app.mod_conversation.conversation_api import conversation_manager
-from config import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
+from app.constants import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
 
 
 @socketio.on('joined', namespace='/chat')
@@ -27,9 +26,8 @@ def joined():
 
 @socketio.on('textMessage', namespace='/chat')
 def textMessage(text, recipients, conversationId, loggedUserName):
-    """Mensaje de texto enviado por el cliente a un usuario en particular
-      Se envia un evento tanto al emisor como al destinatario
-      (emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
+    """Texto enviado por el cliente
+        Se envia un evento a todos los participantes con el texto
     """
     user_id = session.get('user_id', None)
     if not user_id:
@@ -70,7 +68,7 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
 @socketio.on('audioMessage', namespace='/chat')
 def audioMessage(audio, recipients, conversationId, loggedUserName):
     """Audio enviada por el cliente
-      Se envia un evento a todos los participantes con la imagen
+      Se envia un evento a todos los participantes con el audio
     """
     user_id = session.get('user_id', None)
     if not user_id:

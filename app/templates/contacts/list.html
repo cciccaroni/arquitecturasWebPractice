@@ -1,7 +1,21 @@
-
 {% extends 'base/base.html' %}
 
-{% block title %} Index {% endblock %}
+{% block title %} Lista de usuarios {% endblock %}
+
+{% block specific_includes %}
+        <script src="{{ url_for('static', filename='javascript/list.js') }}"></script>
+
+
+{%endblock%}
+
+{% block custom_script %}
+    let socket
+    $(document).ready(() => {
+        initializeSocket();
+    });
+{% endblock %}
+
+
 
 {% block body %}
     {% import 'macros/macros.html' as macros %}
@@ -100,7 +114,7 @@
         </div>
     </div>
 </div>
-    <script src="{{ url_for('static', filename='javascript/list.js') }}"></script>
+
     
     {% if form.errors %}
       <script type="text/javascript">

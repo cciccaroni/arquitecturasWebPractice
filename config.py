@@ -1,5 +1,6 @@
 # Statement for enabling the development environment
 DEBUG = True
+APPLICATION_PORT = 8080
 
 # Define the application directory
 import os
@@ -11,14 +12,9 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
 DATABASE_CONNECT_OPTIONS = {}
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# Application threads. A common general assumption is
-# using 2 per available processor cores - to handle
-# incoming requests using one and performing background
-# operations using the other.
-THREADS_PER_PAGE = 2
 
 # Enable protection agains *Cross-site Request Forgery (CSRF)*
-CSRF_ENABLED     = True
+CSRF_ENABLED = True
 
 # Use a secure, unique and absolutely secret key for
 # signing the data.
@@ -26,8 +22,3 @@ CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
-
-
-APPLICATION_PATH = 'app'
-APPLICATION_IMAGES_PATH = '/static/_files/image/'
-APPLICATION_AUDIOS_PATH = '/static/_files/audio/'

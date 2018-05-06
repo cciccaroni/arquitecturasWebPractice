@@ -16,6 +16,32 @@ $(document).ready(() => {
 });
 
 
+
+function initializeSocket(){
+    socket = io.connect('https://' + location.host + '/chat');
+
+    socket.on('connect', function() {
+        socket.emit('joined');
+    });
+
+    socket.on('uiTextMessage', function(data) {
+        alert("alguien te mando un mensaje");
+    });
+
+    socket.on('uiAudioMessage', function(data) {
+        alert("alguien te mando un audio");
+    });
+
+    socket.on('uiImageMessage', data => {
+        alert("alguien te mando una imagen");
+    });
+}
+
+
+
+
+
+
 /* previously
   let socket;
   let conversation = []
