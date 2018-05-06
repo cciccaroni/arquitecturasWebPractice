@@ -60,7 +60,6 @@
                     {% if message.type == 'audio' %}
                         <audio controls>
                             <source src="{{ url_for('static', filename='_files/audio/'+message.payload ) }}">
-                            <!-- <source src='/static/_files/audio/{{message.payload}}'> -->
                         </audio>
                     {% endif %}
                     {% if message.type == 'image' %}
