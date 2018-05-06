@@ -8,19 +8,18 @@ var audioInput = null,
 var rafID = null;
 var analyserContext = null;
 var canvasWidth, canvasHeight;
-var socketio = io.connect(location.origin + '/chat', {transports: ['websocket']});
 
 function toggleRecording( e ) {
     if (e.classList.contains('recording')) {
         // stop recording
         e.classList.remove('recording');
         recording = false;
-        socketio.emit('end-recording', recipients, $("#conversationId").val(), $("#loggedUserName").val());
+        socket.emit('end-recording', recipients, $("#conversationId").val(), $("#loggedUserName").val());
     } else {
         // start recording
         e.classList.add('recording');
         recording = true;
-        socketio.emit('start-recording', {numChannels: 1, bps: 16, fps: parseInt(audioContext.sampleRate)});
+        socket.emit('start-recording', {numChannels: 1, bps: 16, fps: parseInt(audioContext.sampleRate)});
     }
 }
 
@@ -78,7 +77,7 @@ function gotStream(stream) {
                 var s = Math.max(-1, Math.min(1, input[i]));
                 output.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
             }
-            socketio.emit('write-audio', buffer);
+            socket.emit('write-audio', buffer);
         }
     }
     inputPoint.connect(scriptNode);
@@ -103,5 +102,3 @@ function initAudio() {
         console.log(e);
     });
 }
-
-window.addEventListener('load', initAudio );

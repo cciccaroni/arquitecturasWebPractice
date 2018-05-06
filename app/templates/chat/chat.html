@@ -4,6 +4,8 @@
 
 {% block specific_includes %}
         <script src="{{ url_for('static', filename='javascript/chat.js') }}"></script>
+
+
 {%endblock%}
 
 {% block custom_script %}
@@ -20,6 +22,7 @@
         initializeSocket();
         setUIEventHandlers();
         scrollDownChat();
+        initAudio();
     });
 {% endblock %}
 
@@ -77,6 +80,6 @@
 <input style="display:none" type="file" id="file" name="file">
 <input id="loggedUserName" type="hidden" value="{{actual_user.name.decode()}}">
 <input id="conversationId" type="hidden" value="{{conversation.id}}">
+<script src="{{ url_for('static', filename='javascript/audio.js') }}"></script>
 {% endblock %}
-
 

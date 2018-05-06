@@ -58,6 +58,10 @@ function setUIEventHandlers(){
     });
 }
 
+function sendAudio(byteArray){
+    socket.emit('audioMessage', byteArray, recipients, $("#conversationId").val(), $("#loggedUserName").val());
+}
+
 
 function scrollDownChat(){
     $("#chat").scrollTop($("#chat [messages]").height());
