@@ -1,5 +1,7 @@
+import functools
+
 from flask import session
-from flask_socketio import join_room, emit
+from flask_socketio import join_room, emit, disconnect
 import uuid
 from app import socketio
 from app.appModel.models import User, Conversation
@@ -7,24 +9,27 @@ from app.mod_conversation.conversation_api import conversation_manager
 from app.constants import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
 
 
+#TODO: check if user is authenticated and redirect?
+def authentication_required(f):
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        userIsAuthenticated = True
+        if not userIsAuthenticated:
+            disconnect()
+        else:
+            return f(*args, **kwargs)
+    return wrapped
+
+
 @socketio.on('joined', namespace='/chat')
+@authentication_required
 def joined():
-    # """Sent by clients when they enter a room.
-    # A status message is broadcast to all people in the room."""
     user_id = session.get('user_id', None)
-    
-    # Join into my room
     join_room(user_id)
-
-    # Broadcast of my new status to all users.
-    # status = {'msg': {'id': my_user.id, 'name': str(my_user.name), 'status': 'ENTERED'}}
-    # users = User.query.all()
-    # for user in users:
-    #     emit('status', status, room=user.id)
-
 
 
 @socketio.on('textMessage', namespace='/chat')
+@authentication_required
 def textMessage(text, recipients, conversationId, loggedUserName):
     """Texto enviado por el cliente
         Se envia un evento a todos los participantes con el texto
@@ -33,16 +38,12 @@ def textMessage(text, recipients, conversationId, loggedUserName):
     if not user_id:
         return
 
-    my_user = User.query.get(user_id)
-    if not my_user:
-        return
-
     conversation_manager.log_message(user_id, text, conversationId, "text")
-
     setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, loggedUserName, conversationId)
 
 
 @socketio.on('imageMessage', namespace='/chat')
+@authentication_required
 def imageMessage(image, recipients, conversationId, loggedUserName):
     """Imagen enviada por el cliente
       Se envia un evento a todos los participantes con la imagen
@@ -52,18 +53,13 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
     if not user_id:
         return
 
-    my_user = User.query.get(user_id)
-    if not my_user:
-        return
-
     filePath = saveFile(image, APPLICATION_IMAGES_PATH, '.png')
-
     conversation_manager.log_message(user_id, filePath, conversationId, "image")
-
     setupAndSendEvent(recipients, 'uiImageMessage', {'imagePath': filePath}, loggedUserName, conversationId)
 
 
 @socketio.on('audioMessage', namespace='/chat')
+@authentication_required
 def audioMessage(audio, recipients, conversationId, loggedUserName):
     """Audio enviada por el cliente
       Se envia un evento a todos los participantes con el audio
@@ -72,13 +68,8 @@ def audioMessage(audio, recipients, conversationId, loggedUserName):
     if not user_id:
         return
 
-    my_user = User.query.get(user_id)
-    if not my_user:
-        return
-
     filePath = saveFile(audio, APPLICATION_AUDIOS_PATH, '.wav')
     conversation_manager.log_message(user_id, filePath, conversationId, "audio")
-
     setupAndSendEvent(recipients, 'uiAudioMessage', {'audioPath': filePath}, loggedUserName, conversationId)
 
 
