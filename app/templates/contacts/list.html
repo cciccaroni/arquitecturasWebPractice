@@ -6,6 +6,18 @@
 {% block body %}
     {% import 'macros/macros.html' as macros %}
     {{ macros.navbar(actual_user.name.decode()) }}
+    {% macro render_field(field, placeholder=None) %}
+    {% if field.errors %}
+    <div>
+    {% elif field.flags.error %}
+    <div>
+    {% else %}
+    <div>
+    {% endif %}
+        {% set css_class = 'form-control ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, placeholder=placeholder, **kwargs) }}
+    </div>
+    {% endmacro %}
 
 <ul id="myTabs" class="nav nav-tabs">
     <li role="presentation" class="active"><a href="#usuarios">Usuarios</a></li>
@@ -42,25 +54,43 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="form" name="addGroup" action="/addGroup" method="post">
+        <div class="modal-content"> 
+            <form id="form" name="addGroup" action="{{url_for('group.addGroup')}}" method="POST" role="form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Crear grupo</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+                {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                <div>
+                {% for error in errors %}
+                {{ error }}<br>
+                {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                {% if form.errors %}
+                <div>
+                {% for field, error in form.errors.items() %}
+                {% for e in error %}
+                {{ e }}<br>
+                {% endfor %}
+                {% endfor %}
+                </div>
+                {% endif %}
                 <div class="modal-body">
-                    <input id="group_name" type="text" class="form-control" placeholder="Nombre del grupo">
-                    {% for user in users %}
-                    <div class="form-check">
-                        <input id="cgroup_{{user.id}}" class="form-check-input" type="checkbox" value=""
-                               id="defaultCheck1">
-                        <label class="form-check-label" for="defaultCheck1">
-                            {{user.name}}
-                        </label>
+                    <div style="padding-top: 15px;" >
+                    {{ form.name }}
                     </div>
-                    {% endfor %}
+
+                    {{ form.csrf_token }}
+                    <div style="padding-top: 15px;" >
+                        {{ form.members.label }}
+                        {{ form.members }}
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -71,4 +101,12 @@
     </div>
 </div>
     <script src="{{ url_for('static', filename='javascript/list.js') }}"></script>
+    
+    {% if form.errors %}
+      <script type="text/javascript">
+        $(window).on('load',function(){
+            $('#exampleModal').modal('show');
+        });
+      </script>
+    {% endif %}
 {% endblock %}
