@@ -1,5 +1,6 @@
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
+
 var audioContext = new AudioContext();
 var audioInput = null,
     realAudioInput = null,
@@ -9,19 +10,117 @@ var rafID = null;
 var analyserContext = null;
 var canvasWidth, canvasHeight;
 
+
+
+
+
+const recordAudio = () => {
+  return new Promise(resolve => {
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        const mediaRecorder = new MediaRecorder(stream);
+        const audioChunks = [];
+
+        mediaRecorder.addEventListener("dataavailable", event => {
+          audioChunks.push(event.data);
+        });
+
+        const start = () => {
+          mediaRecorder.start();
+        };
+
+        const stop = () => {
+          return new Promise(resolve => {
+            mediaRecorder.addEventListener("stop", () => {
+              const audioBlob = new Blob(audioChunks);
+              const audioUrl = URL.createObjectURL(audioBlob);
+              const audio = new Audio(audioUrl);
+              const play = () => {
+                audio.play();
+              };
+
+              alert("aquí enviar el blob o el datachunk al servidor");
+
+              resolve({ audioBlob, audioUrl, play });
+            });
+
+            mediaRecorder.stop();
+          });
+        };
+
+        resolve({ start, stop });
+      });
+  });
+};
+
+
+
 function toggleRecording( e ) {
     if (e.classList.contains('recording')) {
         // stop recording
         e.classList.remove('recording');
         recording = false;
-        socket.emit('end-recording', recipients, $("#conversationId").val(), $("#loggedUserName").val());
+        //socket.emit('end-recording', recipients, $("#conversationId").val(), $("#loggedUserName").val());
+        stopRecordingAudio();
     } else {
         // start recording
         e.classList.add('recording');
         recording = true;
-        socket.emit('start-recording', {numChannels: 1, bps: 16, fps: parseInt(audioContext.sampleRate)});
+        //socket.emit('start-recording', {numChannels: 1, bps: 16, fps: parseInt(audioContext.sampleRate)});
+        startRecordingAudio();
     }
 }
+
+
+
+
+var recorder;
+function startRecordingAudio(){
+    (async () => {
+      recorder = await recordAudio();
+      recorder.start();
+    })();
+}
+
+
+function stopRecordingAudio(){
+    (async () => {
+      const audio = await recorder.stop();
+      audio.play();//sacar el play
+    })();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function convertToMono( input ) {
     var splitter = audioContext.createChannelSplitter(2);
