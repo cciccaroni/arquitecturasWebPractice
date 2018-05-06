@@ -39,7 +39,7 @@
     <h1 >Chat with: {{ chatTitle }}</h1>
   </div>
   <div class="col-md-1">
-      <img class="icono" id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="toggleRecording(this);">
+      <img class="icono" id="record" src="{{ url_for('static', filename='img/mic128.png') }}" onclick="recordAudio();">
     </div>
     <div class="col-md-1">
       <img class="icono" id="imageIcon" height="100" width="100" src="{{ url_for('static', filename='img/image_icon.jpg') }}" onclick="$('#file').click()">
