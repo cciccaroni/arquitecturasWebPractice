@@ -39,7 +39,12 @@ const recordAudio = () => {
                 audio.play();
               };
 
-              alert("aquí enviar el blob o el datachunk al servidor");
+              var fileReader = new FileReader();
+              fileReader.readAsArrayBuffer(audioBlob);
+              fileReader.onload = function () {
+                var audioData = fileReader.result;
+                socket.emit('audioMessage', audioData, recipients, $("#conversationId").val(), $("#loggedUserName").val());
+              };
 
               resolve({ audioBlob, audioUrl, play });
             });

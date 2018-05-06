@@ -48,44 +48,6 @@ def textMessage(text, recipients, conversationId, loggedUserName):
     print("mensaje enviado a los miembros del chat")
 
 
-@socketio.on('start-recording', namespace='/chat')
-def start_recording(options):
-    """Start recording audio from the client."""
-    id = uuid.uuid4().hex  # server-side filename
-    session['wavename'] = id + '.wav'
-    wf = wave.open(APPLICATION_PATH + APPLICATION_AUDIOS_PATH + session['wavename'], 'wb')
-    wf.setnchannels(options.get('numChannels', 1))
-    wf.setsampwidth(options.get('bps', 16) // 8)
-    wf.setframerate(options.get('fps', 44100))
-    session['wavefile'] = wf
-
-
-@socketio.on('write-audio', namespace='/chat')
-def write_audio(data):
-    """Write a chunk of audio from the client."""
-    session['wavefile'].writeframes(data)
-
-
-@socketio.on('end-recording', namespace='/chat')
-def end_recording(recipients, conversationId, loggedUserName):
-    """Stop recording audio from the client."""
-
-    user_id = session.get('user_id', None)
-    if not user_id:
-        return
-
-    my_user = User.query.get(user_id)
-    if not my_user:
-        return
-
-    status = {'url': url_for('static', filename='_files/audio/' + session['wavename']), 'from': loggedUserName}
-    for recipient in recipients:
-        emit('add-wavefile', status, room=recipient)
-    session['wavefile'].close()
-    conversation_manager.log_message(user_id, session['wavename'], conversationId, "audio")
-    del session['wavefile']
-    del session['wavename']
-
 
 @socketio.on('imageMessage', namespace='/chat')
 def imageMessage(image, recipients, conversationId, loggedUserName):
@@ -112,3 +74,30 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
     status = {'imagePath': file_relative_path, 'from': loggedUserName}
     for recipient in recipients:
         emit('uiImageMessage', status, room=recipient)
+
+
+@socketio.on('audioMessage', namespace='/chat')
+def audioMessage(audio, recipients, conversationId, loggedUserName):
+    """Imagen enviada por el cliente a un usuario en particular
+      Se envia un evento tanto al emisor como al destinatario
+      (emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
+    """
+    user_id = session.get('user_id', None)
+    if not user_id:
+        return
+
+    my_user = User.query.get(user_id)
+    if not my_user:
+        return
+
+    id = uuid.uuid4().hex  # server-side filename
+    file_relative_path = APPLICATION_AUDIOS_PATH + id + '.wav'
+    f = open(APPLICATION_PATH + file_relative_path, 'wb')
+    f.write(audio)
+
+    conversation_manager.log_message(user_id, file_relative_path, conversationId, "audio")
+
+    status = {'url': file_relative_path, 'from': loggedUserName}
+    for recipient in recipients:
+        emit('uiAudioMessage', status, room=recipient)
+

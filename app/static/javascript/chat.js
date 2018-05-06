@@ -9,7 +9,7 @@ function initializeSocket(){
         appendNewMessage($("<p text class='list-group-item-text'>" + data.msg + "</p>"), data.from);
     });
 
-    socket.on('add-wavefile', function(data) {
+    socket.on('uiAudioMessage', function(data) {
         appendNewMessage($("<audio controls><source src='" + data.url + "'></audio>"), data.from);
     });
 
