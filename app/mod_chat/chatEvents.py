@@ -25,7 +25,6 @@ def joined():
 
 
 
-# Se deberia iterar el toIds, que vienen todos los ids a los que hay que enviar el evento
 @socketio.on('textMessage', namespace='/chat')
 def textMessage(text, recipients, conversationId, loggedUserName):
     """Mensaje de texto enviado por el cliente a un usuario en particular
@@ -42,18 +41,15 @@ def textMessage(text, recipients, conversationId, loggedUserName):
 
     conversation_manager.log_message(user_id, text, conversationId, "text")
 
-    status = {'msg': text, 'from': loggedUserName}
-    for recipient in recipients:
-        emit('uiTextMessage', status, room=recipient)
-    print("mensaje enviado a los miembros del chat")
+    data = {'msg': text, 'from': loggedUserName}
+    sendEventToRecipients(recipients, data, 'uiTextMessage')
 
 
 
 @socketio.on('imageMessage', namespace='/chat')
 def imageMessage(image, recipients, conversationId, loggedUserName):
-    """Imagen enviada por el cliente a un usuario en particular
-      Se envia un evento tanto al emisor como al destinatario
-      (emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
+    """Imagen enviada por el cliente
+      Se envia un evento a todos los participantes con la imagen
     """
 
     user_id = session.get('user_id', None)
@@ -64,23 +60,17 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
     if not my_user:
         return
 
-    id = uuid.uuid4().hex  # server-side filename
-    file_relative_path = APPLICATION_IMAGES_PATH + id + '.png'
-    f = open(APPLICATION_PATH + file_relative_path, 'wb')
-    f.write(image)
+    filePath = saveFile(image, APPLICATION_IMAGES_PATH, '.png')
+    conversation_manager.log_message(user_id, filePath, conversationId, "image")
 
-    conversation_manager.log_message(user_id, file_relative_path, conversationId, "image")
-
-    status = {'imagePath': file_relative_path, 'from': loggedUserName}
-    for recipient in recipients:
-        emit('uiImageMessage', status, room=recipient)
+    data = {'imagePath': filePath, 'from': loggedUserName}
+    sendEventToRecipients(recipients, data, 'uiImageMessage')
 
 
 @socketio.on('audioMessage', namespace='/chat')
 def audioMessage(audio, recipients, conversationId, loggedUserName):
-    """Imagen enviada por el cliente a un usuario en particular
-      Se envia un evento tanto al emisor como al destinatario
-      (emisor updetea la ui mostrando el nuevo mensaje cada vez que recibe un evento, lo mismo el destinatario)
+    """Audio enviada por el cliente
+      Se envia un evento a todos los participantes con la imagen
     """
     user_id = session.get('user_id', None)
     if not user_id:
@@ -90,14 +80,21 @@ def audioMessage(audio, recipients, conversationId, loggedUserName):
     if not my_user:
         return
 
-    id = uuid.uuid4().hex  # server-side filename
-    file_relative_path = APPLICATION_AUDIOS_PATH + id + '.wav'
-    f = open(APPLICATION_PATH + file_relative_path, 'wb')
-    f.write(audio)
+    filePath = saveFile(audio, APPLICATION_AUDIOS_PATH, '.wav')
+    conversation_manager.log_message(user_id, filePath, conversationId, "audio")
 
-    conversation_manager.log_message(user_id, file_relative_path, conversationId, "audio")
+    data = {'audioPath': filePath, 'from': loggedUserName}
+    sendEventToRecipients(recipients, data, 'uiAudioMessage')
 
-    status = {'url': file_relative_path, 'from': loggedUserName}
+
+def sendEventToRecipients(recipients, data, eventName):
     for recipient in recipients:
-        emit('uiAudioMessage', status, room=recipient)
+        emit(eventName, data, room=recipient)
 
+
+def saveFile(file, applicationFileTypePath, fileExtension):
+    id = uuid.uuid4().hex  # server-side filename
+    file_relative_path = applicationFileTypePath + id + fileExtension
+    f = open(APPLICATION_PATH + file_relative_path, 'wb')
+    f.write(file)
+    return file_relative_path

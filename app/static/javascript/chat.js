@@ -10,7 +10,7 @@ function initializeSocket(){
     });
 
     socket.on('uiAudioMessage', function(data) {
-        appendNewMessage($("<audio controls><source src='" + data.url + "'></audio>"), data.from);
+        appendNewMessage($("<audio controls><source src='" + data.audioPath + "'></audio>"), data.from);
     });
 
     socket.on('uiImageMessage', data => {

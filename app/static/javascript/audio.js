@@ -91,7 +91,6 @@ function startRecordingAudio(){
 function stopRecordingAudio(){
     (async () => {
       const audio = await recorder.stop();
-      audio.play();//sacar el play
     })();
 }
 
