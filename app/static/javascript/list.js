@@ -25,15 +25,15 @@ function initializeSocket(){
     });
 
     socket.on('uiTextMessage', function(data) {
-        alert("alguien te mando un mensaje");
+        alert(data.from + " te mando un mensaje");
     });
 
     socket.on('uiAudioMessage', function(data) {
-        alert("alguien te mando un audio");
+        alert(data.from + " alguien te mando un audio");
     });
 
     socket.on('uiImageMessage', data => {
-        alert("alguien te mando una imagen");
+        alert(data.from + " alguien te mando una imagen");
     });
 }
 

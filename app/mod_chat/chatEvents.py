@@ -2,7 +2,7 @@ from flask import session
 from flask_socketio import join_room, emit
 import uuid
 from app import socketio
-from app.appModel.models import User
+from app.appModel.models import User, Conversation
 from app.mod_conversation.conversation_api import conversation_manager
 from app.constants import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
 
@@ -39,9 +39,7 @@ def textMessage(text, recipients, conversationId, loggedUserName):
 
     conversation_manager.log_message(user_id, text, conversationId, "text")
 
-    data = {'msg': text, 'from': loggedUserName}
-    sendEventToRecipients(recipients, data, 'uiTextMessage')
-
+    setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, loggedUserName, conversationId)
 
 
 @socketio.on('imageMessage', namespace='/chat')
@@ -59,10 +57,10 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
         return
 
     filePath = saveFile(image, APPLICATION_IMAGES_PATH, '.png')
+
     conversation_manager.log_message(user_id, filePath, conversationId, "image")
 
-    data = {'imagePath': filePath, 'from': loggedUserName}
-    sendEventToRecipients(recipients, data, 'uiImageMessage')
+    setupAndSendEvent(recipients, 'uiImageMessage', {'imagePath': filePath}, loggedUserName, conversationId)
 
 
 @socketio.on('audioMessage', namespace='/chat')
@@ -81,8 +79,15 @@ def audioMessage(audio, recipients, conversationId, loggedUserName):
     filePath = saveFile(audio, APPLICATION_AUDIOS_PATH, '.wav')
     conversation_manager.log_message(user_id, filePath, conversationId, "audio")
 
-    data = {'audioPath': filePath, 'from': loggedUserName}
-    sendEventToRecipients(recipients, data, 'uiAudioMessage')
+    setupAndSendEvent(recipients, 'uiAudioMessage', {'audioPath': filePath}, loggedUserName, conversationId)
+
+
+def setupAndSendEvent(recipients, eventName, data, sender, conversationId):
+    data['from'] = sender
+    group = Conversation.query.filter(Conversation.id == conversationId).first().group
+    if group:
+        data['group'] = group.name
+    sendEventToRecipients(recipients, data, eventName)
 
 
 def sendEventToRecipients(recipients, data, eventName):
