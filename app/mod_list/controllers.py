@@ -14,7 +14,6 @@ mod_list = Blueprint('list', __name__, template_folder='../templates/contacts')
 def chat():
     friends = User.query.filter(User.id != current_user.id).all()
     form = CreateGroupForm()
-    print(form.name)
     form.set_members(friends)
 
     return render_template('list.html', 

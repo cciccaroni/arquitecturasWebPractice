@@ -5,6 +5,11 @@ from app import db
 from app.appModel.models import User, Group
 from flask_login import login_required, current_user
 
+from wtforms.validators import ValidationError
+
+#to decode form data
+import unicodedata
+
 # Import module forms
 from app.mod_group.forms import CreateGroupForm
 
@@ -16,18 +21,23 @@ def addGroup():
     friends = User.query.filter(User.id != current_user.id).all()
     form = CreateGroupForm(request.form)
     form.set_members(friends)
-    print(form.members.choices)
     
     if form.validate_on_submit():
-        print(form.members)
-        print(form.name)
+        name = unicodedata.normalize('NFKD', form.name.data).encode('ascii', 'ignore')
+        members = form.members.data + [current_user.id]
+        users = User.query.filter(User.id.in_(members)).all()
+
+        if len(users)>1:
+          group = Group(name, users)
+          db.session.add(group)
+          db.session.commit()
+          return redirect('/')
         
-        return redirect('/')
-    
-    print(vars(form))
-    print(form.errors)
+        # TODO: Add a custom validation to the members field of the form
+        # raise ValidationError('Have you selected enough members to the group?')
+
     return render_template('list.html',
-                                users=User.query.filter(User.id != current_user.id).all(),
-                                actual_user=current_user,
-                                groups=Group.query.filter(Group.users.any(User.id == current_user.id)).all(),
-                                form=form)
+                            users=friends,
+                            actual_user=current_user,
+                            groups=Group.query.filter(Group.users.any(User.id == current_user.id)).all(),
+                            form=form)
