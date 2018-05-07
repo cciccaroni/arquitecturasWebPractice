@@ -31,6 +31,7 @@ def addGroup():
           group = Group(name, users)
           db.session.add(group)
           db.session.commit()
+          return redirect('/?tab=grupos')
         
         # TODO: Add a custom validation to the members field of the form
         # raise ValidationError('Have you selected enough members to the group?')

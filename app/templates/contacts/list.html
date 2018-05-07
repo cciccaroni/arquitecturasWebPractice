@@ -10,9 +10,11 @@
     let socket
     $(document).ready(() => {
         initializeSocket();
-    {% if active_tab == 'grupos' %}
+    if(getQueryVariable('tab') == 'grupos'){
         $('.nav-tabs a[href="#grupos"]').tab('show');
-    {% endif %}
+    }
+
+
     });
 {% endblock %}
 
