@@ -44,7 +44,7 @@
       <div class="row">
         <div class="col-md-8">
             <div role="tabpanel" class="tab-pane active image_back" id="chat">
-                <ul messages class="list-group">
+                <ul messages class="list-group no-margin-bottom">
                     {% for message in conversation.messages%}
                       <a user class='item list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name == actual_user.name) else ''}}'>
                         <h4 name class="list-group-item-heading">{{message.fromUser.name}}</h4>

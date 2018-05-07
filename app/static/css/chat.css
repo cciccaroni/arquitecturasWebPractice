@@ -129,5 +129,13 @@ i{
     margin-bottom: 0px !important;
 }
 
+.list-image{
+    display: block;
+    max-height: 240px;
+    max-width: 240px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 
 

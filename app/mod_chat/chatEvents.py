@@ -39,7 +39,7 @@ def textMessage(text, recipients, conversationId, loggedUserName):
         return
 
     conversation_manager.log_message(user_id, text, conversationId, "text")
-    setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, loggedUserName, conversationId)
+    setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, loggedUserName, conversationId, user_id)
 
 
 @socketio.on('imageMessage', namespace='/chat')
@@ -55,7 +55,7 @@ def imageMessage(image, recipients, conversationId, loggedUserName):
 
     filePath = saveFile(image, APPLICATION_IMAGES_PATH, '.png')
     conversation_manager.log_message(user_id, filePath, conversationId, "image")
-    setupAndSendEvent(recipients, 'uiImageMessage', {'imagePath': filePath}, loggedUserName, conversationId)
+    setupAndSendEvent(recipients, 'uiImageMessage', {'imagePath': filePath}, loggedUserName, conversationId, user_id)
 
 
 @socketio.on('audioMessage', namespace='/chat')
@@ -70,14 +70,16 @@ def audioMessage(audio, recipients, conversationId, loggedUserName):
 
     filePath = saveFile(audio, APPLICATION_AUDIOS_PATH, '.wav')
     conversation_manager.log_message(user_id, filePath, conversationId, "audio")
-    setupAndSendEvent(recipients, 'uiAudioMessage', {'audioPath': filePath}, loggedUserName, conversationId)
+    setupAndSendEvent(recipients, 'uiAudioMessage', {'audioPath': filePath}, loggedUserName, conversationId, user_id)
 
 
-def setupAndSendEvent(recipients, eventName, data, sender, conversationId):
+def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_id):
+    data['user_id'] = user_id;
     data['from'] = sender
     group = Conversation.query.filter(Conversation.id == conversationId).first().group
     if group:
         data['group'] = group.name
+        data['group_id'] = group.id
     sendEventToRecipients(recipients, data, eventName)
 
 
