@@ -129,5 +129,10 @@ i{
     margin-bottom: 0px !important;
 }
 
+.speech-bubble {
+	position: relative;
+	background: #00aabb;
+	border-radius: .4em;
+}
 
 
