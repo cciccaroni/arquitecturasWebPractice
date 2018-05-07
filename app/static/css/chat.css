@@ -95,12 +95,12 @@ i{
 }
 
 
-.item {
+#override a {
    background-color: transparent !important;
    border: 1px solid #9d9d9d !important;
 }
 
-.item:focus {
+#override a:focus {
    background-color: transparent !important;
 }
 

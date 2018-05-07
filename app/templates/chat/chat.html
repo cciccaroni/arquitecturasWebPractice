@@ -29,48 +29,50 @@
 
 {% import 'macros/macros.html' as macros %}
 {{ macros.navbar(actual_user.name) }}
-<div class="container">
-    <div class="row justify-content-md-center">
-      <div class="col-md-1">
-          <i class="material-icons back_arrow" onclick="window.location.href = '/';">arrow_back</i>
-      </div>
-      <div class="col-md-8">
-        <h1 >Chat with: {{ chatTitle }}</h1>
-      </div>
-    </div>
-
-
-  <div class="row">
-    <div class="col-md-8">
-        <div role="tabpanel" class="tab-pane active image_back" id="chat">
-            <ul messages class="list-group">
-                {% for message in conversation.messages%}
-                  <a user class='item list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name == actual_user.name) else ''}}'>
-                    <h4 name class="list-group-item-heading">{{message.fromUser.name}}</h4>
-                    {% if message.type == 'text' %}
-                        <p text class="list-group-item-text">{{message.payload}}</p>
-                    {% endif %}
-                    {% if message.type == 'audio' %}
-                        <audio controls>
-                            <source src="{{message.payload}}">
-                        </audio>
-                    {% endif %}
-                    {% if message.type == 'image' %}
-					    <img src='{{message.payload}}' style="max-height: 240px; max-width: 240px;">
-                    {% endif %}
-                  </a>
-                {% endfor %}
-            </ul>
+<div id="override">
+    <div class="container">
+        <div class="row justify-content-md-center">
+          <div class="col-md-1">
+              <i class="material-icons back_arrow" onclick="window.location.href = '/';">arrow_back</i>
+          </div>
+          <div class="col-md-8">
+            <h1 >Chat with: {{ chatTitle }}</h1>
+          </div>
         </div>
+
+
+      <div class="row">
+        <div class="col-md-8">
+            <div role="tabpanel" class="tab-pane active image_back" id="chat">
+                <ul messages class="list-group">
+                    {% for message in conversation.messages%}
+                      <a user class='item list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name == actual_user.name) else ''}}'>
+                        <h4 name class="list-group-item-heading">{{message.fromUser.name}}</h4>
+                        {% if message.type == 'text' %}
+                            <p text class="list-group-item-text">{{message.payload}}</p>
+                        {% endif %}
+                        {% if message.type == 'audio' %}
+                            <audio controls>
+                                <source src="{{message.payload}}">
+                            </audio>
+                        {% endif %}
+                        {% if message.type == 'image' %}
+                            <img src='{{message.payload}}' style="max-height: 240px; max-width: 240px;">
+                        {% endif %}
+                      </a>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+      </div>
+      <div class="row justify-content-md-center">
+        <div class="col-md-8">
+            <i class="mic material-icons" id="record" onclick="toggleRecording(this);">mic</i>
+            <i class="icono material-icons" id="imageIcon" onclick="$('#file').click()">photo</i>
+            <input id="text" class="form-control" size="80" placeholder="Enter your message here">
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="row justify-content-md-center">
-    <div class="col-md-8">
-        <i class="mic material-icons" id="record" onclick="toggleRecording(this);">mic</i>
-        <i class="icono material-icons" id="imageIcon" onclick="$('#file').click()">photo</i>
-        <input id="text" class="form-control" size="80" placeholder="Enter your message here">
-    </div>
-  </div>
 </div>
 <input style="display:none" type="file" id="file" name="file" accept="image/x-png,image/gif,image/jpeg" >
 <input id="loggedUserName" type="hidden" value="{{actual_user.name}}">
