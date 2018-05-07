@@ -4,14 +4,15 @@
 
 {% block specific_includes %}
         <script src="{{ url_for('static', filename='javascript/list.js') }}"></script>
-
-
 {%endblock%}
 
 {% block custom_script %}
     let socket
     $(document).ready(() => {
         initializeSocket();
+    {% if active_tab == 'grupos' %}
+        $('.nav-tabs a[href="#grupos"]').tab('show');
+    {% endif %}
     });
 {% endblock %}
 

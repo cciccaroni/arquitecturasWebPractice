@@ -31,12 +31,12 @@ def addGroup():
           group = Group(name, users)
           db.session.add(group)
           db.session.commit()
-          return redirect('/')
         
         # TODO: Add a custom validation to the members field of the form
         # raise ValidationError('Have you selected enough members to the group?')
 
     return render_template('list.html',
+                            active_tab= 'grupos',
                             users=friends,
                             actual_user=current_user,
                             groups=Group.query.filter(Group.users.any(User.id == current_user.id)).all(),

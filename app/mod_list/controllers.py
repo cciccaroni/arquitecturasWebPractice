@@ -16,7 +16,8 @@ def chat():
     form = CreateGroupForm()
     form.set_members(friends)
 
-    return render_template('list.html', 
+    return render_template('list.html',
+                            active_tab= 'usuarios',
                             form=form,
                             users=friends,
                             actual_user=current_user,
