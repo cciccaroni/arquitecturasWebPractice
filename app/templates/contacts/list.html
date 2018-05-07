@@ -39,36 +39,66 @@
 </ul>
 
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="usuarios">
-        <ul class="list-group">
-            {% for user in users %}
-            <a user id={{user.id}} class="list-group-item">
-                <span unread_count="0" class="badge badge-primary badge-pill"></span>
-                <h4 name class="list-group-item-heading">{{user.name}}</h4>
-                <p last_received class="list-group-item-text"></p>
-            </a>
-            {% endfor %}
-        </ul>
+    <div role="tabpanel" class="tab-pane active top-padding" id="usuarios">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-6 image_back no-padding">
+                    <ul class="list-group  no-margin-bottom">
+                        {% for user in users %}
+                        <a user id={{user.id}} class="item list-group-item">
+                            <span unread_count="0" class="badge badge-primary badge-pill"></span>
+                            <h4 name class="list-group-item-heading">{{user.name}}</h4>
+                            <p last_received class="list-group-item-text"></p>
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+        </div>
     </div>
-    <div role="tabpanel" class="tab-pane" id="grupos">
-        {% for group in groups %}
-        <a group id={{group.id}} class="list-group-item">
-            <span unread_count="0" class="badge badge-primary badge-pill"></span>
-            <h4 name class="list-group-item-heading">{{group.name}}</h4>
-            <p last_received class="list-group-item-text"></p>
-        </a>
-        {% endfor %}
+    <div role="tabpanel" class="tab-pane top-padding" id="grupos">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+
+                    </div>
+                    <div class="col-md-6 image_back no-padding">
+                        <ul class="list-group no-margin-bottom">
+                             {% for group in groups %}
+
+                                <a group id={{group.id}} class="list-group-item">
+                                    <span unread_count="0" class="badge badge-primary badge-pill"></span>
+                                    <h4 name class="list-group-item-heading">{{group.name}}</h4>
+                                    <p last_received class="list-group-item-text"></p>
+                                </a>
+                                {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn" data-toggle="modal" data-target="#exampleModal">
+                            <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+        </div>
+
+
+
+
+
     </div>
 </div>
 
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Crear grupo
-</button>
+
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content"> 
+        <div class="modal-content">
             <form id="form" name="addGroup" action="{{url_for('group.addGroup')}}" method="POST" role="form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Crear grupo</h5>

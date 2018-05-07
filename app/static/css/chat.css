@@ -95,18 +95,38 @@ i{
 }
 
 
-#override a {
+.tab-pane a {
    background-color: transparent !important;
    border: 1px solid #9d9d9d !important;
 }
 
-#override a:focus {
+.tab-pane a:focus {
    background-color: transparent !important;
 }
 
 
 .image_back{
     background-image: url('/static/img/background.png');
+}
+
+.top-padding {
+  padding: 40px;
+  > .tab-pane {
+    display: none;
+  }
+  > .active {
+    display: block;
+  }
+}
+
+.no-padding{
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+.no-margin-bottom{
+    margin-bottom: 0px !important;
 }
 
 
