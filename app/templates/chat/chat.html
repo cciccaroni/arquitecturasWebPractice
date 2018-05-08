@@ -11,7 +11,7 @@
 {% block custom_script %}
     let socket
     let recipients
-    let conversationId
+    let conversationId = {{conversation.id}}
     let loggedUserName
     $(document).ready(() => {
         recipients = [];

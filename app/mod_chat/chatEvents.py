@@ -74,8 +74,9 @@ def audioMessage(audio, recipients, conversationId, loggedUserName):
 
 
 def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_id):
-    data['user_id'] = user_id;
+    data['user_id'] = user_id
     data['from'] = sender
+    data['conversationId'] = conversationId
     group = Conversation.query.filter(Conversation.id == conversationId).first().group
     if group:
         data['group'] = group.name

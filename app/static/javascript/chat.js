@@ -6,7 +6,9 @@ function initializeSocket(){
     });
 
     socket.on('uiTextMessage', function(data) {
-        appendNewMessage($("<p text class='list-group-item-text'>" + data.msg + "</p>"), data.from);
+        if(conversationId == data.conversationId){
+                appendNewMessage($("<p text class='list-group-item-text'>" + data.msg + "</p>"), data.from);
+        }
     });
 
     socket.on('uiAudioMessage', function(data) {
