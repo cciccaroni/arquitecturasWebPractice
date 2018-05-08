@@ -36,7 +36,7 @@ function initializeSocket(){
 
           //update unread count
           updateUnreadCount(elementId);
-          updateFrom(elementId, data.group_id);
+          updateFrom(elementId, data.group_id, data.from);
 
           //hide audio and image
           $("#" + elementId + " [image]").attr("src", "");
@@ -61,7 +61,8 @@ function initializeSocket(){
           audio.load();
 
           updateUnreadCount(elementId)
-          updateFrom(elementId, data.group_id);
+          updateFrom(elementId, data.group_id, data.from);
+
 
           //hide image and text
           $("#" + elementId + " [last_received]").text("");
@@ -84,7 +85,7 @@ function initializeSocket(){
           $("#" + elementId + " img").show();
 
           updateUnreadCount(elementId);
-          updateFrom(elementId, data.group_id);
+          updateFrom(elementId, data.group_id, data.from);
 
           //hide text and audio
           $("#" + elementId + " audio").hide();
@@ -99,9 +100,9 @@ function updateUnreadCount(elementId){
     $("#" + elementId + " [unread_count]").text(parseInt(unread) + 1);
 }
 
-function updateFrom(elementId, groupId){
+function updateFrom(elementId, groupId, from){
     if(groupId){
-        $("#" + elementId + " [last_received_from]").text(data.from + ": ");
+        $("#" + elementId + " [last_received_from]").text(from + ": ");
     }
 }
 
