@@ -10,13 +10,11 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script src="{{ url_for('static', filename='jQuery/jquery-3.3.1.slim.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
-            integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
-            crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/materialicons.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='jQuery/jquery-3.3.1.slim.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='libs/popper.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='libs/socket.io.min.js') }}"></script>
 
 
     {% block specific_includes %}{%endblock%}
