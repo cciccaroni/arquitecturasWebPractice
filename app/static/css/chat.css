@@ -59,7 +59,7 @@
 }
 
 .left{float:left; clear:both;}
-.right {float:right; clear:both}
+.right {float:right; clear:both;}
 
 #chat{
     height: 400px;
@@ -174,5 +174,12 @@ body {
     background-color: white !important;
     color: #337ab7 !important;
     border: 1px solid #337ab7 !important;
+}
+
+.clearfix::after {
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
 }
 

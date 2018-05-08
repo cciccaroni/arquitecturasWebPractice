@@ -43,7 +43,8 @@
 
       <div class="row">
         <div class="col-md-8">
-            <div role="tabpanel" class="active image_back" id="chat">
+            <div role="tabpanel" class="tab-pane active image_back" id="chat">
+                <ul messages class="clearfix">
                     {% for message in conversation.messages%}
                       <div user class='chat_item {{ 'right' if  (message.fromUser.name == actual_user.name) else 'left'}}'>
                         <h4 name class="list-group-item-heading">{{message.fromUser.name}}</h4>
@@ -60,6 +61,7 @@
                         {% endif %}
                       </div>
                     {% endfor %}
+                </ul>
             </div>
         </div>
       </div>

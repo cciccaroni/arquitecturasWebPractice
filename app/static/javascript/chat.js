@@ -26,14 +26,16 @@ function initializeSocket(){
 }
 
 function appendNewMessage(element, from){
-    var newMessageElement = $("<a user class='list-group-item'>")
+    var newMessageElement = $("<div user class='chat_item'>")
     newMessageElement.append($("<h4 name class='list-group-item-heading'>" + from + "</h4>"))
     newMessageElement.append(element)
     var isLoggedUserMessage = from == $("#loggedUserName").val();
 
     if (isLoggedUserMessage)
     {
-        newMessageElement.addClass("loggedUserMessage");
+        newMessageElement.addClass("right");
+    }else{
+        newMessageElement.addClass("left");
     }
 
     $("#chat [messages]").append(newMessageElement);
