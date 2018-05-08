@@ -49,9 +49,17 @@
     background: -moz-radial-gradient(center, ellipse cover, #ff0000 0%,#FFFFFF 90%,#ffffff 100%,#ffffff 100%);
     background: radial-gradient(center, ellipse cover, #ff0000 0%,#FFFFFF 90%,#ffffff 100%,#ffffff 100%);
 }
-.loggedUserMessage {
-    text-align : right;
+.chat_item.left {
+	margin-left:25px;
 }
+
+.chat_item.right {
+	margin-right:25px;
+	background:#dcf8c6;
+}
+
+.left{float:left; clear:both;}
+.right {float:right; clear:both}
 
 #chat{
     height: 400px;
@@ -94,14 +102,22 @@ i{
   color: gray;
 }
 
-
-.tab-pane a {
-   background-color: transparent !important;
-   border: 1px solid #9d9d9d !important;
+html {
+  height: 100%;
 }
 
-.tab-pane a:focus {
-   background-color: transparent !important;
+body {
+    height: 100% !important;
+}
+
+.tab-pane a {
+   background-color: white !important;
+   cursor: pointer;
+}
+
+
+.tab-pane a:hover {
+   background-color: #dcf8c6 !important;
 }
 
 
@@ -129,10 +145,34 @@ i{
     margin-bottom: 0px !important;
 }
 
-.speech-bubble {
-	position: relative;
-	background: #00aabb;
-	border-radius: .4em;
+.chat_item {
+    position:relative;
+	padding:15px;
+	margin:1em 0 3em;
+	background:white; /* default background for browsers without gradient support */
+	/* css3 */
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
 }
 
+.background{
+    height: 100%;
+    background-color: #ddd;
+}
+
+.list-group-item.border_item{
+    border: 1px solid #ccc !important;
+}
+.nav-tabs>li.active>a{
+    background-color: #ddd !important;
+    border: 1px solid #ccc !important;
+    border-bottom-color: transparent !important;
+}
+
+.button{
+    background-color: white !important;
+    color: #337ab7 !important;
+    border: 1px solid #337ab7 !important;
+}
 

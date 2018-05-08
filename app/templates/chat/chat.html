@@ -43,10 +43,9 @@
 
       <div class="row">
         <div class="col-md-8">
-            <div role="tabpanel" class="tab-pane active image_back" id="chat">
-                <ul messages class="list-group no-margin-bottom">
+            <div role="tabpanel" class="active image_back" id="chat">
                     {% for message in conversation.messages%}
-                      <a user class='speech-bubble item list-group-item {{ 'loggedUserMessage' if  (message.fromUser.name == actual_user.name) else ''}}'>
+                      <div user class='chat_item {{ 'right' if  (message.fromUser.name == actual_user.name) else 'left'}}'>
                         <h4 name class="list-group-item-heading">{{message.fromUser.name}}</h4>
                         {% if message.type == 'text' %}
                             <p text class="list-group-item-text">{{message.payload}}</p>
@@ -59,9 +58,8 @@
                         {% if message.type == 'image' %}
                             <img src='{{message.payload}}' style="max-height: 240px; max-width: 240px;">
                         {% endif %}
-                      </a>
+                      </div>
                     {% endfor %}
-                </ul>
             </div>
         </div>
       </div>

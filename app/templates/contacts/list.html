@@ -42,29 +42,30 @@
     <li role="presentation"><a href="#grupos">Grupos</a></li>
 </ul>
 
-<div class="tab-content">
-    <div role="tabpanel" class="tab-pane active top-padding" id="usuarios">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-3">
-                </div>
-                <div class="col-md-6 no-padding">
-                    <ul class="list-group  no-margin-bottom">
-                        {% for user in users %}
-                        <a user id="user_{{user.id}}" user_id="{{user.id}}" class="item list-group-item">
-                            <span unread_count="0" class="badge badge-primary badge-pill"></span>
-                            <h4 name class="list-group-item-heading">{{user.name}}</h4>
-                            <p last_received class="list-group-item-text"></p>
-                            <img src='' class="list-image">
-                            <audio id="user_{{user.id}}_audio" style="display:none;" controls>
-                                <source audio_source src="">
-                            </audio>
-                        </a>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                </div>
+<div class="background">
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active top-padding" id="usuarios">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-6 no-padding">
+                        <ul class="list-group  no-margin-bottom">
+                            {% for user in users %}
+                            <a user id="user_{{user.id}}" user_id="{{user.id}}" class="item list-group-item border_item">
+                                <span unread_count="0" class="badge badge-primary badge-pill"></span>
+                                <h4 name class="list-group-item-heading">{{user.name}}</h4>
+                                <p last_received class="list-group-item-text"></p>
+                                <img src='' class="list-image">
+                                <audio id="user_{{user.id}}_audio" style="display:none;" controls>
+                                    <source audio_source src="">
+                                </audio>
+                            </a>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
             </div>
         </div>
     </div>
@@ -77,7 +78,7 @@
                     <div class="col-md-6 no-padding">
                         <ul class="list-group no-margin-bottom">
                              {% for group in groups %}
-                                <a group id="group_{{group.id}}" group_id="{{group.id}}" class="list-group-item">
+                                <a group id="group_{{group.id}}" group_id="{{group.id}}" class="item list-group-item border_item">
                                     <span unread_count="0" class="badge badge-primary badge-pill"></span>
                                     <h4 name class="list-group-item-heading">{{group.name}}</h4>
                                     <p class="list-group-item-text"><span last_received_from style="font-weight:bold"></span><span last_received></span> </p>
@@ -90,7 +91,7 @@
                         </ul>
                     </div>
                     <div class="col-md-3">
-                        <button type="button" class="btn" data-toggle="modal" data-target="#exampleModal">
+                        <button type="button" class="btn button" data-toggle="modal" data-target="#exampleModal">
                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
                         </button>
                     </div>
@@ -98,7 +99,7 @@
         </div>
     </div>
 </div>
-
+</div>
 
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
