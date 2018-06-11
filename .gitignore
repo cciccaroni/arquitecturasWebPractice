@@ -6,6 +6,7 @@ __pycache__/
 # Flask stuff:
 instance/
 .webassets-cache
+flask/
 
 # pyenv
 .python-version
