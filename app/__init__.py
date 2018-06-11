@@ -9,7 +9,7 @@ from flask_login import LoginManager
 
 app = Flask(__name__)
 # with app.app_context():
-#     current_app.config.appName = "BUASAAP"
+#     current_app.config.appName = "BuatsApp"
     
 socketio = SocketIO(engineio_logger=True)
 
@@ -19,7 +19,7 @@ login_manager.login_view = '/auth/signin/'
 
 # Configurations
 app.config.from_object('config')
-app.config.appName = "BUASAAP"
+# app.config.appName = "BuatsApp"
 
 # Browser static (os) favicon
 @app.route('/img/favicon.ico')

@@ -1,6 +1,8 @@
 # Statement for enabling the development environment
 DEBUG = True
-APPLICATION_PORT = 8080
+APP_HOST = '0.0.0.0'
+APP_PORT = 8080
+APP_NAME = "BuasApp"
 
 # Define the application directory
 import os
