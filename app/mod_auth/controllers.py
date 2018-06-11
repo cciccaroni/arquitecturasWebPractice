@@ -3,6 +3,8 @@ from flask import Blueprint, request, render_template, \
                   flash, session, redirect, url_for, g
 
 
+import hashlib
+
 # Import module forms
 from app.mod_auth.forms import LoginForm, SignUpForm
 
@@ -31,7 +33,7 @@ def signin():
     
     # Verify the sign in form
     if form.validate_on_submit():
-        user = User.query.filter(User.email == form.email.data).first()
+        user = User.query.filter(User.email == form.email.data and User.platform_id == 1).first()
 
         if user and user.password == form.password.data:
             login_user(LoggedUser(user), remember=form.remember.data)
@@ -60,7 +62,7 @@ def signup():
             email = form.email.data
             name = form.name.data
             password = form.password.data
-            user = User(name, email, password)
+            user = User(name, email, password, 1, 1)
             db.session.add(user)
             db.session.commit()
             

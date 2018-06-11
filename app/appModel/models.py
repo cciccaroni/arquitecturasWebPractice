@@ -13,14 +13,34 @@ user_conversation = db.Table('user_conversation',
                                        primary_key=True)
                              )
 
+
+# Define a platform model
+class Platform(db.Model):
+    __tablename__ = 'platform'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)
+    supports_audio = db.Column(db.Boolean, nullable=False)
+    supports_image = db.Column(db.Boolean, nullable=False)
+
+    # New instance instantiation procedure
+    def __init__(self, name, supports_audio, supports_image):
+        self.name = name
+        self.supports_audio = supports_audio
+        self.supports_image = supports_image
+
 # Define a User model
 class User(db.Model):
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
     conversations = db.relationship('Conversation', secondary=user_conversation, lazy='subquery',
                                     back_populates='users')
+    platform_id = db.Column(db.Integer, db.ForeignKey('platform.id'), default=1)
+
+    external_id = db.Column(db.Integer, default=1)
+
     groups = db.relationship('Group', secondary=user_group, lazy='subquery',
                              back_populates='users')
 
@@ -29,10 +49,12 @@ class User(db.Model):
     password = db.Column(db.String(192), nullable=False)
 
     # New instance instantiation procedure
-    def __init__(self, name, email, password):
+    def __init__(self, name, email, password, platform_id, external_id):
         self.name = name
         self.email = email
         self.password = password
+        self.platform_id = platform_id
+        self.external_id = external_id
 
     def addConversation(self, conversation):
         self.conversations.append(conversation)

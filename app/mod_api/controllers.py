@@ -4,24 +4,12 @@ mod_api = Blueprint('api', __name__)
 
 users = [
     {
-        'id': 1,
-        'name': u'pablo'
-    },
-    {
         'id': 2,
         'name': u'ivan'
     },
     {
-        'id': 3,
-        'name': u'christian'
-    },
-    {
         'id': 4,
         'name': u'gustavo'
-    },
-    {
-        'id': 5,
-        'name': u'marcelo'
     }
 ]
 

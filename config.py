@@ -22,3 +22,5 @@ CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
+
+INTEGRATION_ENDPOINT = "http://localhost:5000/"
