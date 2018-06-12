@@ -2,8 +2,8 @@
 import sys, argparse
 from flask_socketio import SocketIO
 
-from app import app, socketio, login_manager
 from config import DEBUG, APP_PORT, APP_HOST, APP_NAME
+import config, os
 
 # Parsing args
 parser = argparse.ArgumentParser(
@@ -15,10 +15,15 @@ parser.add_argument('-p','--port', type=str, default=APP_PORT, required=False,
                     help='Un puerto para la app. Default {}'.format(APP_PORT))
 args = parser.parse_args()
 
+# Modifico el config
+config.SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(config.BASE_DIR, '{}.db'.format(args.name))
+
+# Inicializo la app con el config modificado
+from app import app, socketio, login_manager
 app.config.appName =  args.name
 
 login_manager.init_app(app)
 socketio.init_app(app)
 
-socketio.run(app, host=APP_HOST, port=args.port, debug=DEBUG, 
+socketio.run(app, host=APP_HOST, port=int(args.port), debug=DEBUG, 
             log_output=True, ssl_context=('app/cert.pem', 'app/key.pem'))

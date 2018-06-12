@@ -19,7 +19,6 @@ login_manager.login_view = '/auth/signin/'
 
 # Configurations
 app.config.from_object('config')
-# app.config.appName = "BuatsApp"
 
 # Browser static (os) favicon
 @app.route('/img/favicon.ico')
