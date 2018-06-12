@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
 
-from app.mod_api.integration_models import getUsersJson
+from app.mod_api.integration_models import *
 
 mod_api = Blueprint('api', __name__)
 
@@ -16,6 +16,7 @@ def new_user():
     id = request.json['id']
     name = request.json['name']
     platform = request.json['platform']
+    saveExternalUser(id, name, platform)
     return "success"
 
 @mod_api.route('/api/room', methods=['POST'])
