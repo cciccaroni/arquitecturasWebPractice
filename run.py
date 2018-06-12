@@ -25,8 +25,9 @@ app.config.appName =  args.name
 login_manager.init_app(app)
 socketio.init_app(app)
 
-from app.mod_api.integrator import importAll
-importAll()
+# TODO: Ver como agregar esto aca sin que explote
+# from app.mod_api.integrator import importAll
+# importAll()
 
 socketio.run(app, host=APP_HOST, port=int(args.port), debug=DEBUG, 
             log_output=True, ssl_context=('app/cert.pem', 'app/key.pem'))

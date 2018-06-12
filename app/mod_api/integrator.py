@@ -8,11 +8,13 @@ headers = {'content-type': 'application/json'}
 
 def importAll():
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'platforms'
-    print(endpoint)
-    platforms = requests.get(url=endpoint, headers=headers, verify=False)
-    print('platforms', platforms)
-    return
-    for platform in json.loads(platforms.content)['platforms']:
+    r = requests.get(url=endpoint, headers=headers, verify=False)
+
+    if(not r.status_code == requests.codes.ok):
+      return
+    
+    platforms = r.json()['platforms']
+    for platform in platforms:
         if not platform['name'] == app.config.appName:
             addPlatform(platform)
             addUsers(platform)
@@ -21,7 +23,6 @@ def importAll():
 def addPlatform(platform):
     #chequear si la plataforma existe, sino agregarla con las keys
     exists = Platform.query.filter(Platform.name == platform['name']).first()
-    print('existe?', exists)
     if not exists:
         newPlatform = Platform(platform['name'], 'True' == platform['supportAudio'], 'True' == platform['supportImage'])
         db.session.add(newPlatform)
