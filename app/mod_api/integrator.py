@@ -15,7 +15,7 @@ def importAll():
     
     platforms = r.json()['platforms']
     for platform in platforms:
-        if not platform['name'] == app.config.appName:
+        if not platform['name'].lower() == app.config.appName.lower():
             addPlatform(platform)
             addUsers(platform)
 

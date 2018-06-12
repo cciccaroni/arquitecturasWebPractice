@@ -1,22 +1,13 @@
 from flask import Blueprint, jsonify, request, abort
 
-mod_api = Blueprint('api', __name__)
+from app.mod_api.integration_models import getUsersJson
 
-users = [
-    {
-        'id': 2,
-        'name': u'ivan'
-    },
-    {
-        'id': 4,
-        'name': u'gustavo'
-    }
-]
+mod_api = Blueprint('api', __name__)
 
 
 @mod_api.route('/api/users', methods=['GET'])
 def getUsers():
-    return jsonify({'users': users})
+    return jsonify({'users': getUsersJson()})
 
 @mod_api.route('/api/user', methods=['POST'])
 def new_user():
