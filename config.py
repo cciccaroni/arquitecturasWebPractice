@@ -15,7 +15,7 @@ DATABASE_CONNECT_OPTIONS = {}
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
-# Enable protection agains *Cross-site Request Forgery (CSRF)*
+# Enable protection against *Cross-site Request Forgery (CSRF)*
 CSRF_ENABLED = True
 
 # Use a secure, unique and absolutely secret key for
