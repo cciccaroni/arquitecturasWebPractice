@@ -6,6 +6,7 @@ from flask import Blueprint, request, render_template, \
 import hashlib
 
 # Import module forms
+from app.mod_api.integrator import exportUser
 from app.mod_auth.forms import LoginForm, SignUpForm
 
 # Import module models (i.e. User)
@@ -65,7 +66,9 @@ def signup():
             user = User(name, email, password, 1, 1)
             db.session.add(user)
             db.session.commit()
-            
+
+            exportUser(user)
+
             login_user(LoggedUser(user))
             return redirect(next or '/')
 

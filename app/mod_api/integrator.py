@@ -18,6 +18,7 @@ def importAll():
         if not platform['name'].lower() == app.config.appName.lower():
             addPlatform(platform)
             addUsers(platform)
+            deleteUsers(platform)
 
 
 def addPlatform(platform):
@@ -38,3 +39,21 @@ def addUsers(platform):
             newUser = User(user['name'], email, 'bla', platformId, user['id'])
             db.session.add(newUser)
     db.session.commit()
+
+def deleteUsers(platform):
+    #quiero borrar todos los usuarios en mi base que ya no estan en los usuarios de la plataforms
+    platformId = Platform.query.filter(Platform.name == platform['name']).first().id
+    savedPlatformUsers =  User.query.filter(User.platform_id == platformId).all()
+    ids = [element['id'] for element in platform['users']]
+    for user in savedPlatformUsers:
+        if user.external_id not in ids:
+            #todo: borrar en cascada a las tablas donde figure el user_id
+            db.session.delete(user)
+    db.session.commit()
+
+def exportUser(user):
+    endpoint = app.config['INTEGRATION_ENDPOINT'] + 'user'
+    jsonUser = { "id" : user.id, "name" : user.name, "token": app.config.appToken}
+    r = requests.post(url=endpoint, headers=headers, data=json.dumps(jsonUser), verify=False)
+
+

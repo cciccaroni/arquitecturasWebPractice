@@ -3,6 +3,7 @@ DEBUG = True
 APP_HOST = '0.0.0.0'
 APP_PORT = 8080
 APP_NAME = "BuasApp"
+APP_TOKEN = "3333"
 
 # Define the application directory
 import os
@@ -25,4 +26,4 @@ CSRF_SESSION_KEY = "secret"
 # Secret key for signing cookies
 SECRET_KEY = "secret"
 
-INTEGRATION_ENDPOINT = "https://localhost:5000/"
+INTEGRATION_ENDPOINT = "http://localhost:5000/"
