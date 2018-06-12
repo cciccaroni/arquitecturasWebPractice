@@ -7,16 +7,11 @@ from flask_login import login_required, current_user
 
 from app.mod_group.forms import CreateGroupForm
 
-from app.mod_api.integrator import importAll
-
-
 mod_list = Blueprint('list', __name__, template_folder='../templates/contacts')
 
 @mod_list.route('/', methods=['GET'])
 @login_required
 def chat():
-    #TODO: sacar el impotall de aca y moverlo a un proceso batch que corra cada X cantidad de tiempo
-    #importAll()
     friends = User.query.filter(User.id != current_user.id).all()
     form = CreateGroupForm()
     form.set_members(friends)
