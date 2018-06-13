@@ -57,7 +57,7 @@ def addPlatform(platform):
     )
     db.session.add(newPlatform)
     db.session.commit()
-    app.logger.debug('New platform added...\n{}'.format(newPlatform))
+    app.logger.debug('New platform added... {} - {}'.format(newPlatform.id, newPlatform.name))
     
     return newPlatform.id
 
@@ -67,7 +67,7 @@ def addUsers(platform):
     actuales = User.query.filter(User.platform_id == p.id)
 
     app.logger.debug('Adding users from platform {}'.format(p.name))
-    app.logger.debug('Existentes: {}'.format([a for a in actuales]))
+    app.logger.debug('Existent users: {}'.format([a for a in actuales]))
     for user in platform['users']:
         exists = User.query.filter(
             User.platform_id == p.id,
@@ -92,7 +92,7 @@ def deleteUsers(platform):
         if user.external_id not in ids:
             # TODO: borrar en cascada a las tablas donde figure el user_id
             db.session.delete(user)
-            app.logger.debug('Deleting user:\n {}'.format(user))
+            app.logger.debug('Deleting user: {}'.format(user))
     db.session.commit()
     return
 
@@ -100,6 +100,7 @@ def deleteUsers(platform):
 def exportUser(user):
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'user'
     jsonUser = {"id": user.id, "name": user.name, "token": app.config.appToken}
+    app.logger.debug('Exporting new user: {} | {}'.format(user, jsonUser))
     r = requests.post(url=endpoint, headers=headers,
                       data=json.dumps(jsonUser), verify=False)
     return
