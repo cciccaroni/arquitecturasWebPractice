@@ -92,8 +92,8 @@ def deleteUsers(platform):
         if user.external_id not in ids:
             # TODO: borrar en cascada a las tablas donde figure el user_id
             db.session.delete(user)
+            app.logger.debug('Deleting user:\n {}'.format(user))
     db.session.commit()
-    app.logger.debug('Deleted users:\n {}'.format(savedPlatformUsers))
     return
 
 
