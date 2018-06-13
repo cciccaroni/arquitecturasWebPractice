@@ -1,4 +1,11 @@
 from app.appModel.models import *
+from app.mod_conversation.conversation_api import conversation_manager
+from app import app
+from flask_socketio import SocketIO
+
+import functools
+
+
 
 def getUsersJson():
     result = []
@@ -41,4 +48,26 @@ def saveExternalConversation(id, name, platformName, type, users):
         db.session.flush()
         db.session.commit()
 
+def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, senderPlatform, text):
+    roomOriginalPlatformId = Platform.query.filter(Platform.name == roomOriginalPlatform).first().id
+    conversation = Conversation.query.filter(Conversation.external_id == roomId, Conversation.platform_id == roomOriginalPlatformId).first()
+    conversationId = conversation.id
+
+    "busco sender id y user namme"
+    platformId = Platform.query.filter(Platform.name == senderPlatform).first().id
+    senderUser = User.query.filter(User.external_id == senderId, User.platform_id == platformId).first()
+    user_id = senderUser.id
+    senderName = senderUser.name
+
+    "recipients son todos los usuarios de nuestra plataforma en esa conversacion"
+    recipients = []
+
+    for user in conversation.users:
+        if user.platform_id == 1:
+            recipients.append(user.id)
+
+    conversation_manager.log_message(user_id, text, conversationId, "text")
+    return {"recipients": recipients, "senderName" : senderName, "conversationId" : conversationId, "user_id" : user_id}
+
+    #setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderName, conversationId, user_id)
 

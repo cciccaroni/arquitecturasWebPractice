@@ -5,6 +5,7 @@ from flask_socketio import join_room, emit, disconnect
 import uuid
 from app import socketio
 from app.appModel.models import User, Conversation
+from app.mod_api.integrator import exportMessage
 from app.mod_conversation.conversation_api import conversation_manager
 from app.constants import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
 
@@ -85,8 +86,21 @@ def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_
 
 
 def sendEventToRecipients(recipients, data, eventName):
-    for recipient in recipients:
-        emit(eventName, data, room=recipient)
+    users = User.query.filter(User.id.in_(recipients)).all()
+
+    for user in users:
+        if user.platform_id == 1:
+           emit(eventName, data, room=user.id)
+
+    if thereIsAnExternalUser(users):
+        exportMessage(data)
+
+
+def thereIsAnExternalUser(users):
+    for user in users:
+        if user.platform_id != 1:
+            return True
+    return False
 
 
 def saveFile(file, applicationFileTypePath, fileExtension):

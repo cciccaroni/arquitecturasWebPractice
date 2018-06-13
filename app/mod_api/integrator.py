@@ -3,6 +3,7 @@ from app import app
 import json
 import requests
 from app.mod_database import db
+from flask_login import login_user, logout_user, current_user
 
 headers = {'content-type': 'application/json'}
 
@@ -64,8 +65,24 @@ def exportConversation(conversationId, fromUser, toUser):
     r = requests.post(url=endpoint, headers=headers, data=json.dumps(room), verify=False)
     a = 'a'
 
+def exportMessage(data):
+    conversation = Conversation.query.filter(Conversation.id == data['conversationId']).first()
+    platformOriginalId = conversation.platform_id
+    if(platformOriginalId == 1):
+        originalRoomPlatform = app.config.appName
+        roomId = data['conversationId']
+    else:
+        originalRoomPlatform = Platform.query.filter(Platform.id == platformOriginalId).first().name
+        roomId = conversation.external_id
+
+    senderId = data['user_id']
+    text = data['msg']
+    token = app.config.appToken
+
+    message = { "roomOriginalPlatform": originalRoomPlatform, "roomId": roomId, "senderId": senderId, "text": text, "token": token}
+    endpoint = app.config['INTEGRATION_ENDPOINT'] + 'message'
+    r = requests.post(url=endpoint, headers=headers, data=json.dumps(message), verify=False)
+
 def createJsonRoom(id, name, type, users):
     return { "id" : id, "name" : name, "token" :  app.config.appToken, "type": type, "users" : users}
-
-
 

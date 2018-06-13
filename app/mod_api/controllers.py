@@ -2,7 +2,10 @@ from flask import Blueprint, jsonify, request, abort
 
 from app.mod_api.integration_models import *
 
+from app import socketio
+
 mod_api = Blueprint('api', __name__)
+
 
 
 @mod_api.route('/api/users', methods=['GET'])
@@ -41,4 +44,14 @@ def new_message():
     senderId = request.json['senderId']
     senderPlatform = request.json['senderPlatform']
     text = request.json['text']
+    "guardar el mensaje en la base"
+    dataForSocket = saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, senderPlatform, text);
+
+    "TODO: mandar un socket a los clientes, no estoy pudiendo hacerlo desde aca porque no estoy dentro de un event handler de socket io." \
+    "hay que buscar la forma. en dataForSocket junto con la variable text tengo todos los datos que necesito para poder llama a la funcion setupAndSendEvent " \
+    "que esta en chatEvents.py, pero no funciona porque no estamos en el contexto de socket io"
+
     return "success"
+
+
+
