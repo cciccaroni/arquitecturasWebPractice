@@ -74,9 +74,15 @@ class Conversation(db.Model):
     group = db.relationship('Group', lazy=True,
                             backref='conversation', uselist=False)
 
-    def __init__(self, users=[], group=None):
+    platform_id = db.Column(db.Integer, db.ForeignKey('platform.id'), default=1)
+
+    external_id = db.Column(db.Integer, default=1)
+
+    def __init__(self, users=[], group=None, platform_id=1, external_id=1):
         self.users = users
         self.group = group
+        self.platform_id = platform_id
+        self.external_id = external_id
 
     def __repr__(self):
         return '<Conversation %r>' % (self.id)

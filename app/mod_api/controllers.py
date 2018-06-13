@@ -23,7 +23,13 @@ def new_user():
 def new_room():
     if not request.json:
         abort(400)
+
     users = request.json['users']
+    id  = request.json['id']
+    name =  request.json['name']
+    platform = request.json['platform']
+    type = request.json['type']
+    saveExternalConversation(id, name, platform, type, users);
     return "success"
 
 @mod_api.route('/api/message', methods=['POST'])

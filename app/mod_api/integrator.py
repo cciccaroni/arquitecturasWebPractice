@@ -56,4 +56,16 @@ def exportUser(user):
     jsonUser = { "id" : user.id, "name" : user.name, "token": app.config.appToken}
     r = requests.post(url=endpoint, headers=headers, data=json.dumps(jsonUser), verify=False)
 
+def exportConversation(conversationId, fromUser, toUser):
+    toPlatform = Platform.query.filter(Platform.id == toUser.platform_id).first().name
+    users = [{ app.config.appName : [fromUser.id]}, {toPlatform : [toUser.external_id]}]
+    room = createJsonRoom(conversationId, fromUser.name + " - " + toUser.name, "private", users)
+    endpoint = app.config['INTEGRATION_ENDPOINT'] + 'room'
+    r = requests.post(url=endpoint, headers=headers, data=json.dumps(room), verify=False)
+    a = 'a'
+
+def createJsonRoom(id, name, type, users):
+    return { "id" : id, "name" : name, "token" :  app.config.appToken, "type": type, "users" : users}
+
+
 
