@@ -17,6 +17,7 @@ import unicodedata
 
 from app.mod_database import db
 
+from app import app
 from flask_login import login_user, logout_user, current_user
 from . import LoggedUser
 
@@ -63,7 +64,7 @@ def signup():
             email = form.email.data
             name = form.name.data
             password = form.password.data
-            user = User(name, email, password, 1, 1)
+            user = User(name, email, password, app.config.platformId, 1)
             db.session.add(user)
             db.session.commit()
 

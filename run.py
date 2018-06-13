@@ -4,6 +4,7 @@ from flask_socketio import SocketIO
 
 from config import DEBUG, APP_PORT, APP_HOST, APP_NAME, APP_TOKEN
 import config, os
+import logging
 
 # Parsing args
 parser = argparse.ArgumentParser(
@@ -26,12 +27,14 @@ config.SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(config.BASE_DIR, '{
 from app import app, socketio, login_manager
 app.config.appName =  args.name
 app.config.appToken = args.token
-
+app.logger.debug('Starting app: {}'.format(args.name))
 login_manager.init_app(app)
 socketio.init_app(app)
 
-from app.mod_api.integrator import importAll
+from app.mod_api.integrator import initializePlatform, importAll
+initializePlatform()
 importAll()
+
 
 
 # IMPORTANTE: Si le quitan la opcion de use_reloader, lanza dos procesos y 

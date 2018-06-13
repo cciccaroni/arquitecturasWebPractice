@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request, abort
-
 from app.mod_api.integration_models import *
-
 from app import socketio
+import logging
 
 mod_api = Blueprint('api', __name__)
 
@@ -10,7 +9,9 @@ mod_api = Blueprint('api', __name__)
 
 @mod_api.route('/api/users', methods=['GET'])
 def getUsers():
-    return jsonify({'users': getUsersJson()})
+    users = getUsersJson()
+    app.logger.debug('Returning users.\n {}'.format(users))
+    return jsonify({'users': users})
 
 @mod_api.route('/api/user', methods=['POST'])
 def new_user():

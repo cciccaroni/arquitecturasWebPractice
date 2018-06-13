@@ -35,8 +35,11 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(128), nullable=False)
-    conversations = db.relationship('Conversation', secondary=user_conversation, lazy='subquery',
-                                    back_populates='users')
+    conversations = db.relationship(
+        'Conversation', 
+        secondary=user_conversation, 
+        lazy='subquery',
+        back_populates='users')
     platform_id = db.Column(db.Integer, db.ForeignKey('platform.id'), default=1)
 
     external_id = db.Column(db.Integer, default=1)

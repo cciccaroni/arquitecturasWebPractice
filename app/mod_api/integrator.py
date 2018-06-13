@@ -9,6 +9,18 @@ import logging
 headers = {'content-type': 'application/json'}
 
 
+def initializePlatform():
+    me = {
+      'name': app.config.appName, 
+      'supportAudio': 'True', 
+      'supportImage': 'True'
+    }
+    
+    app.config.platformId = addPlatform(me)
+    
+    print('myPlatformId', app.config.platformId)
+    return
+
 def importAll():
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'platforms'
     r = requests.get(url=endpoint, headers=headers, verify=False)
@@ -21,37 +33,50 @@ def importAll():
     app.logger.debug('Importing platforms/users...\n{}'.format(platforms))
     for platform in platforms:
         addPlatform(platform)
-        if not platform['name'].lower() == app.config.appName.lower():
-            addUsers(platform)
-            deleteUsers(platform)
+        
+        # No deberia poder devolver nuestra plataforma
+        if platform['name'] == app.config.appName:
+          continue
+        
+        addUsers(platform)
+        deleteUsers(platform) 
     return
 
 
 def addPlatform(platform):
     # chequear si la plataforma existe, sino agregarla con las keys
-    exists = Platform.query.filter(Platform.name == platform['name']).count() > 0
-    if not exists:
-        newPlatform = Platform(
-            platform['name'],
-            'True' == platform['supportAudio'],
-            'True' == platform['supportImage']
-        )
-        db.session.add(newPlatform)
-        db.session.commit()
-    return
+    p = Platform.query.filter(Platform.name == platform['name']).first()
+
+    if p:        
+        return p.id
+    
+    newPlatform = Platform(
+        platform['name'],
+        'True' == platform['supportAudio'],
+        'True' == platform['supportImage']
+    )
+    db.session.add(newPlatform)
+    db.session.commit()
+    app.logger.debug('New platform added...\n{}'.format(newPlatform))
+    
+    return newPlatform.id
 
 
 def addUsers(platform):
-    platformId = Platform.query.filter(Platform.name == platform['name']).first().id
+    p = Platform.query.filter(Platform.name == platform['name']).first()
+    actuales = User.query.filter(User.platform_id == p.id)
+
+    app.logger.debug('Adding users from platform {}'.format(p.name))
+    app.logger.debug('Existentes: {}'.format([a for a in actuales]))
     for user in platform['users']:
         exists = User.query.filter(
-            User.platform_id == platformId,
+            User.platform_id == p.id,
             User.external_id == user['id']
         ).first()
         if not exists:
             # TODO: Ver si las demas plataformas pueden exportar email
             email = user['name'] + "@" + platform['name']
-            newUser = User(user['name'], email, 'bla', platformId, user['id'])
+            newUser = User(user['name'], email, 'bla', p.id, user['id'])
             db.session.add(newUser)
             app.logger.debug('Adding user: {}'.format(newUser))
     db.session.commit()
@@ -60,8 +85,8 @@ def addUsers(platform):
 
 def deleteUsers(platform):
     # Borrar localmente todos los usuarios que ya no existen en sus plataforms
-    platformId = Platform.query.filter(Platform.name == platform['name']).first().id
-    savedPlatformUsers = User.query.filter(User.platform_id == platformId).all()
+    p = Platform.query.filter(Platform.name == platform['name']).first()
+    savedPlatformUsers = User.query.filter(User.platform_id == p.id).all()
     ids = [element['id'] for element in platform['users']]
     for user in savedPlatformUsers:
         if user.external_id not in ids:
