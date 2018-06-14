@@ -1,7 +1,8 @@
 from app.appModel.models import *
 from app.mod_conversation.conversation_api import conversation_manager
+from app import socketio
 from app import app
-from flask_socketio import SocketIO
+from app import socketio
 
 import functools
 
@@ -50,7 +51,10 @@ def saveExternalConversation(id, name, platformName, type, users):
 
 def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, senderPlatform, text):
     roomOriginalPlatformId = Platform.query.filter(Platform.name == roomOriginalPlatform).first().id
-    conversation = Conversation.query.filter(Conversation.external_id == roomId, Conversation.platform_id == roomOriginalPlatformId).first()
+    if roomOriginalPlatformId == 1:
+        conversation = Conversation.query.filter(Conversation.id == roomId).first()
+    else:
+        conversation = Conversation.query.filter(Conversation.external_id == roomId, Conversation.platform_id == roomOriginalPlatformId).first()
     conversationId = conversation.id
 
     "busco sender id y user namme"
@@ -67,7 +71,24 @@ def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, se
             recipients.append(user.id)
 
     conversation_manager.log_message(user_id, text, conversationId, "text")
-    return {"recipients": recipients, "senderName" : senderName, "conversationId" : conversationId, "user_id" : user_id}
+    setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderName, conversationId, user_id)
 
-    #setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderName, conversationId, user_id)
+#ESTA PARTE NO ANDA. NO ANDA  socketio.emit(eventName, data, room=user.id) (no hace nada)
+#codigo copiado de chat events. lo copie para probar, pero igual no funciona la funcion sendEventToRecipients
+def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_id):
+    data['user_id'] = user_id
+    data['from'] = sender
+    data['conversationId'] = conversationId
+    group = Conversation.query.filter(Conversation.id == conversationId).first().group
+    if group:
+        data['group'] = group.name
+        data['group_id'] = group.id
+    sendEventToRecipients(recipients, data, eventName)
+
+def sendEventToRecipients(recipients, data, eventName):
+    users = User.query.filter(User.id.in_(recipients)).all()
+
+    for user in users:
+        if user.platform_id == 1:
+           socketio.emit(eventName, data, room=user.id)
 
