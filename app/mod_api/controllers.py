@@ -21,6 +21,7 @@ def new_user():
     id = request.json['id']
     name = request.json['name']
     platform = request.json['platform']
+    app.logger.debug('New user received. {}-{}-{}'.format(id, name, platform))
     saveExternalUser(id, name, platform)
     return "success"
 

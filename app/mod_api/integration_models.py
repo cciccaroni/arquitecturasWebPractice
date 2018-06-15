@@ -23,6 +23,7 @@ def saveExternalUser(id, name, platformName):
         db.session.add(_user)
         db.session.flush()
         db.session.commit()
+    return
 
 def saveExternalConversation(id, name, platformName, type, users):
     if type == "private":

@@ -1,6 +1,6 @@
 from app.appModel.models import *
 from app.mod_api.integrator import exportConversation
-
+from app import app
 
 class UserDTO:
     def __init__(self, userID):
@@ -40,9 +40,12 @@ class ConversationManager:
         fromUser = User.query.filter(User.id == fromUserID).first()
         toUser = User.query.filter(User.id == toUserID).first()
         users_conversation = self.conversationBetweenUsers(fromUser, toUser)
+        
+        app.logger.debug('Starting conversation: {} :: {}'.format(fromUser, toUser))
         if not users_conversation or len(users_conversation) == 0:
             conversation = self.createNewConversation(fromUser, toUser)
             if self.isExternal(toUser):
+                app.logger.debug('With an external user')
                 exportConversation(conversation.id, fromUser, toUser)
             return conversation
         else:
