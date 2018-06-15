@@ -164,3 +164,38 @@ def exportMessage(data):
 
 def createJsonRoom(id, name, type, users):
     return {"id": id, "name": name, "token":  app.config.appToken, "type": type, "users": users}
+
+
+
+def exportGroup(, conversation):
+    users = group.users
+    platforms = Platform.query.all()
+    groupUsers = []
+
+    for platform in platforms:
+        if platform.name == app.config.appName:
+            platformUsers = []
+            for user in users:
+                if user.platform_id == platform.id:
+                    platformUsers.append(user.id)
+            groupUsers.append({ platform.name : platformUsers})
+        else:
+            platformUsers = []
+            for user in users:
+                if user.platform_id == platform.id:
+                    platformUsers.append(user.external_id)
+            groupUsers.append({ platform.name : platformUsers})
+
+
+    room = createJsonRoom(
+                          conversation.id,
+                          group.name,
+                          "public",
+                          groupUsers
+                      )
+
+    endpoint = app.config['INTEGRATION_ENDPOINT'] + 'room'
+    r = requests.post(url=endpoint, headers=headers,
+                      data=json.dumps(room), verify=False)
+    app.logger.debug('Group exported {}::{}::{}'.format(room, endpoint, r))
+    return

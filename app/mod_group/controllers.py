@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, request, json
 from werkzeug.utils import redirect
 
-from app import db
+from app import db, app
 from app.appModel.models import User, Group
 from flask_login import login_required, current_user
 
-from wtforms.validators import ValidationError
-
+from app.mod_api.integrator import exportGroup
+from app.mod_conversation.conversation_api import conversation_manager
 #to decode form data
 import unicodedata
 
@@ -30,11 +30,20 @@ def addGroup():
         if len(users)>1:
           group = Group(name, users)
           db.session.add(group)
+          db.session.flush()
           db.session.commit()
+          conversation = conversation_manager.startGroupConversation(group.id)
+          thereIsAnExternalUser = False
+          for user in users:
+              if user.platform_id != app.config.platformId:
+                  thereIsAnExternalUser = True
+
+          if thereIsAnExternalUser:
+              exportGroup(group, conversation)
+
+
           return redirect('/?tab=grupos')
-        
-        # TODO: Add a custom validation to the members field of the form
-        # raise ValidationError('Have you selected enough members to the group?')
+
 
     return render_template('list.html',
                             active_tab= 'grupos',
@@ -42,3 +51,6 @@ def addGroup():
                             actual_user=current_user,
                             groups=Group.query.filter(Group.users.any(User.id == current_user.id)).all(),
                             form=form)
+
+
+
