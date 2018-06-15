@@ -23,7 +23,23 @@ function initializeSocket(){
     });
 
     socket.on('newUser', function(data) {
-      console.log('Se agrego newUser', data)
+      const elementId = "user_" + data.id;
+      let newUser = `
+        <a user id="${elementId}" user_id="${data.id}" class="item list-group-item border_item">
+            <span unread_count="0" class="badge badge-primary badge-pill"></span>
+            <h4 name class="list-group-item-heading">${data.name}</h4>
+            <p last_received class="list-group-item-text"></p>
+            <img src='' class="list-image">
+            <audio id="${data.id}_audio" style="display:none;" controls>
+                <source audio_source src="">
+            </audio>
+        </a>
+      `
+      $('#contactList').append(newUser)
+      $(`#${elementId}`).click(function() {
+        location.href = "chat/" + $(this).attr("user_id");
+      });
+
     });
 
     socket.on('uiTextMessage', function(data) {
@@ -120,10 +136,10 @@ function getFromText(data){
 }
 
 function getQueryVariable(variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split('&');
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
+    let query = window.location.search.substring(1);
+    let vars = query.split('&');
+    for (let i = 0; i < vars.length; i++) {
+        let pair = vars[i].split('=');
         if (decodeURIComponent(pair[0]) == variable) {
             return decodeURIComponent(pair[1]);
         }
