@@ -86,13 +86,12 @@ def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, se
 
     for user in conversation.users:
         if user.platform_id == app.config.platformId:
-            recipients.append(user.id)
+            recipients.append(user)
 
     conversation_manager.log_message(user_id, text, conversationId, "text")
     setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderName, conversationId, user_id)
 
-#ESTA PARTE NO ANDA. NO ANDA  socketio.emit(eventName, data, room=user.id) (no hace nada)
-#codigo copiado de chat events. lo copie para probar, pero igual no funciona la funcion sendEventToRecipients
+
 def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_id):
     data['user_id'] = user_id
     data['from'] = sender
@@ -104,9 +103,7 @@ def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_
     sendEventToRecipients(recipients, data, eventName)
 
 def sendEventToRecipients(recipients, data, eventName):
-    users = User.query.filter(User.id.in_(recipients)).all()
-
-    for user in users:
+    for user in recipients:
         if user.platform_id == app.config.platformId:
            socketio.emit(eventName, data, room=user.id, namespace='/chat')
 

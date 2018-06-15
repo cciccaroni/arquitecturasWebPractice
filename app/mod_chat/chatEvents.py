@@ -102,7 +102,7 @@ def sendEventToRecipients(data, eventName, recipients=None):
         if user.platform_id == app.config.platformId:
             socketio.emit(eventName, data, room=user.id, namespace='/chat')
         else: 
-            thereIsAnExternalUser == True
+            thereIsAnExternalUser = True
 
     if thereIsAnExternalUser:
         exportMessage(data)
