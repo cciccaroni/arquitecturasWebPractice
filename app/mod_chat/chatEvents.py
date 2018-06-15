@@ -4,6 +4,7 @@ from flask import session
 from flask_socketio import join_room, emit, disconnect
 import uuid
 from app import socketio
+from app import app
 from app.appModel.models import User, Conversation
 from app.mod_api.integrator import exportMessage
 from app.mod_conversation.conversation_api import conversation_manager
@@ -27,6 +28,11 @@ def authentication_required(f):
 def joined():
     user_id = session.get('user_id', None)
     join_room(user_id)
+
+# @socketio.on('newUser', namespace='/chat')
+# @authentication_required
+# def newUser():
+#     user_id = session.get('user_id', None)
 
 
 @socketio.on('textMessage', namespace='/chat')
@@ -82,25 +88,24 @@ def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_
     if group:
         data['group'] = group.name
         data['group_id'] = group.id
-    sendEventToRecipients(recipients, data, eventName)
+    sendEventToRecipients(data, eventName, recipients)
 
 
-def sendEventToRecipients(recipients, data, eventName):
-    users = User.query.filter(User.id.in_(recipients)).all()
-
+def sendEventToRecipients(data, eventName, recipients=None):
+    if (recipients):
+        users = User.query.filter(User.id.in_(recipients)).all()
+    else:
+        users = User.query.all()
+    
+    thereIsAnExternalUser = False
     for user in users:
-        if user.platform_id == 1:
-           emit(eventName, data, room=user.id)
+        if user.platform_id == app.config.platformId:
+            socketio.emit(eventName, data, room=user.id, namespace='/chat')
+        else: 
+            thereIsAnExternalUser == True
 
-    if thereIsAnExternalUser(users):
+    if thereIsAnExternalUser:
         exportMessage(data)
-
-
-def thereIsAnExternalUser(users):
-    for user in users:
-        if user.platform_id != 1:
-            return True
-    return False
 
 
 def saveFile(file, applicationFileTypePath, fileExtension):

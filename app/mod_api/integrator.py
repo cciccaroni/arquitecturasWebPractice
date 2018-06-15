@@ -5,6 +5,7 @@ import requests
 from app.mod_database import db
 from flask_login import login_user, logout_user, current_user
 import logging
+from flask_socketio import emit
 
 headers = {'content-type': 'application/json'}
 
@@ -61,25 +62,37 @@ def addPlatform(platform):
     
     return newPlatform.id
 
+def addUser(user, platform):
+    exists = User.query.filter(
+        User.platform_id == platform['id'],
+        User.external_id == user['id']
+    ).first()
+    if not exists:
+        # TODO: Ver si las demas plataformas pueden exportar email
+        email = user['name'] + "@" + platform['name']
+        newUser = User(user['name'], email, 'bla', platform['id'], user['id'])
+        db.session.add(newUser)
+        app.logger.debug('Adding user: {}'.format(newUser))
+        db.session.commit()
+        us = User.query.all()
+        for u in us:
+            if u.id != u.id:
+                if u.platform_id == app.config.platformId:
+                    emit('newUser', newUser, room=u.id)
 
 def addUsers(platform):
     p = Platform.query.filter(Platform.name == platform['name']).first()
+    
+    if not p:
+        return
+    
+    platform['id'] = p.id
     actuales = User.query.filter(User.platform_id == p.id)
 
-    app.logger.debug('Adding users from platform {}'.format(p.name))
+    app.logger.debug('Adding users from platform {}'.format(platform['name']))
     app.logger.debug('Existent users: {}'.format([a for a in actuales]))
     for user in platform['users']:
-        exists = User.query.filter(
-            User.platform_id == p.id,
-            User.external_id == user['id']
-        ).first()
-        if not exists:
-            # TODO: Ver si las demas plataformas pueden exportar email
-            email = user['name'] + "@" + platform['name']
-            newUser = User(user['name'], email, 'bla', p.id, user['id'])
-            db.session.add(newUser)
-            app.logger.debug('Adding user: {}'.format(newUser))
-    db.session.commit()
+        addUser(user, platform)
     return
 
 
@@ -100,9 +113,9 @@ def deleteUsers(platform):
 def exportUser(user):
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'user'
     jsonUser = {"id": user.id, "name": user.name, "token": app.config.appToken}
-    app.logger.debug('Exporting new user: {} | {}'.format(user, jsonUser))
     r = requests.post(url=endpoint, headers=headers,
                       data=json.dumps(jsonUser), verify=False)
+    app.logger.debug('New user exported: {} :: {} :: {}'.format(jsonUser, endpoint, r))
     return
 
 
@@ -121,12 +134,15 @@ def exportConversation(conversationId, fromUser, toUser):
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'room'
     r = requests.post(url=endpoint, headers=headers,
                       data=json.dumps(room), verify=False)
+    app.logger.debug('Conversation exported {}::{}::{}'.format(room, endpoint, r))
     return
 
 def exportMessage(data):
     conversation = Conversation.query.filter(Conversation.id == data['conversationId']).first()
     platformOriginalId = conversation.platform_id
-    if(platformOriginalId == 1):
+    app.logger.debug('Exporting msg')
+    
+    if(platformOriginalId == app.config.platformId):
         originalRoomPlatform = app.config.appName
         roomId = data['conversationId']
     else:
@@ -143,6 +159,7 @@ def exportMessage(data):
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'message'
     r = requests.post(url=endpoint, headers=headers,
                       data=json.dumps(message), verify=False)
+    app.logger.debug('Msg exported {}::{}::{}'.format(message, endpoint, r))
     return
 
 def createJsonRoom(id, name, type, users):

@@ -22,6 +22,10 @@ function initializeSocket(){
         socket.emit('joined');
     });
 
+    socket.on('newUser', function(data) {
+      console.log('Se agrego newUser', data)
+    });
+
     socket.on('uiTextMessage', function(data) {
           var elementId;
           if(data.group_id){

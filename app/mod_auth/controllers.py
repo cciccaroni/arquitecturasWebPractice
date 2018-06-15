@@ -8,6 +8,8 @@ import hashlib
 # Import module forms
 from app.mod_api.integrator import exportUser
 from app.mod_auth.forms import LoginForm, SignUpForm
+from app import socketio
+from app import app
 
 # Import module models (i.e. User)
 from app.appModel.models import User
@@ -51,6 +53,14 @@ def signin():
     return render_template('signin.html', form=form)
 
 
+def updateLocalUsersLists(newUser):
+    users = User.query.all()
+    for user in users:
+        if user.id != user.id:
+            if user.platform_id == app.config.platformId:
+                socketio.emit('newUser', newUser, room=user.id, namespace='/chat')
+
+
 @mod_auth.route('/signup/', methods=['GET', 'POST'])
 def signup():
     # If sign in form is submitted
@@ -69,6 +79,8 @@ def signup():
             db.session.commit()
 
             exportUser(user)
+            updateLocalUsersLists(user)
+            
 
             login_user(LoggedUser(user))
             return redirect(next or '/')

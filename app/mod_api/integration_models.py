@@ -1,8 +1,9 @@
 from app.appModel.models import *
+from app.mod_api.integrator import importAll
 from app.mod_conversation.conversation_api import conversation_manager
+from flask_socketio import join_room, emit, disconnect
 from app import socketio
 from app import app
-from app import socketio
 
 import functools
 
@@ -16,6 +17,8 @@ def getUsersJson():
     return result
 
 def saveExternalUser(id, name, platformName):
+    users = User.query.all()
+
     platform = Platform.query.filter(Platform.name == platformName).first()
     if platform:
         email = name + "@" + platformName
@@ -23,6 +26,20 @@ def saveExternalUser(id, name, platformName):
         db.session.add(_user)
         db.session.flush()
         db.session.commit()
+        app.logger.debug('Saved as external {}-{}'.format(_user, platformName))
+        newUser = {
+          'id':_user.id,
+          'name': _user.name
+        }
+        for user in users:
+            if user.platform_id == app.config.platformId:
+                app.logger.debug('Adverting {}: {}; to: {}'.format('newUser', newUser, user.id))
+                socketio.emit('newUser', newUser, room=user.id, namespace='/chat')
+    else:
+        platforms = Platform.query.all()
+        app.logger.debug('Platform not found. {}-{}-{}'.format(id, name, platformName))
+        app.logger.debug('Available platforms: {}'.format([p.name for p in platforms]))
+        importAll()
     return
 
 def saveExternalConversation(id, name, platformName, type, users):
@@ -52,7 +69,7 @@ def saveExternalConversation(id, name, platformName, type, users):
 
 def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, senderPlatform, text):
     roomOriginalPlatformId = Platform.query.filter(Platform.name == roomOriginalPlatform).first().id
-    if roomOriginalPlatformId == 1:
+    if roomOriginalPlatformId == app.config.platformId:
         conversation = Conversation.query.filter(Conversation.id == roomId).first()
     else:
         conversation = Conversation.query.filter(Conversation.external_id == roomId, Conversation.platform_id == roomOriginalPlatformId).first()
@@ -68,7 +85,7 @@ def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, se
     recipients = []
 
     for user in conversation.users:
-        if user.platform_id == 1:
+        if user.platform_id == app.config.platformId:
             recipients.append(user.id)
 
     conversation_manager.log_message(user_id, text, conversationId, "text")
@@ -90,6 +107,6 @@ def sendEventToRecipients(recipients, data, eventName):
     users = User.query.filter(User.id.in_(recipients)).all()
 
     for user in users:
-        if user.platform_id == 1:
-           socketio.emit(eventName, data, room=user.id)
+        if user.platform_id == app.config.platformId:
+           socketio.emit(eventName, data, room=user.id, namespace='/chat')
 

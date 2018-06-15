@@ -27,7 +27,7 @@ config.SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(config.BASE_DIR, '{
 from app import app, socketio, login_manager
 app.config.appName =  args.name
 app.config.appToken = args.token
-app.logger.debug('Starting app: {}'.format(args.name))
+app.logger.debug('Initializing app: {}'.format(args.name))
 login_manager.init_app(app)
 socketio.init_app(app)
 
@@ -39,7 +39,7 @@ importAll()
 
 # IMPORTANTE: Si le quitan la opcion de use_reloader, lanza dos procesos y 
 # eso hace que explote el importAll() porque deja 'abierta' la conexion (o algo asi).
-
+app.logger.debug('Starting app: {} on {}:{}'.format(args.name, APP_HOST, args.port))
 socketio.run(app, host=APP_HOST, port=int(args.port), debug=DEBUG,
             log_output=True, certfile='app/cert.pem', keyfile='app/key.pem',
             use_reloader=False)
