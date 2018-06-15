@@ -41,5 +41,5 @@ importAll()
 # eso hace que explote el importAll() porque deja 'abierta' la conexion (o algo asi).
 
 socketio.run(app, host=APP_HOST, port=int(args.port), debug=DEBUG,
-            log_output=True, ssl_context=('app/cert.pem', 'app/key.pem'),
+            log_output=True, certfile='app/cert.pem', keyfile='app/key.pem',
             use_reloader=False)
