@@ -82,7 +82,8 @@ def saveExternalConversation(id, name, platformName, type, users):
         db.session.add(group)
         db.session.flush()
         db.session.commit()
-        conversation = conversation_manager.startGroupConversation(group.id)
+        platformConversationOwnerId = Platform.query.filter(Platform.name == platformName).first().id
+        conversation = conversation_manager.startGroupConversation(group.id, platform_id= platformConversationOwnerId, external_id= id)
 
 
 
@@ -94,23 +95,22 @@ def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, se
         conversation = Conversation.query.filter(Conversation.id == roomId).first()
     else:
         conversation = Conversation.query.filter(Conversation.external_id == roomId, Conversation.platform_id == roomOriginalPlatformId).first()
-    conversationId = conversation.id
 
-    "busco sender id y user namme"
+    if conversation is None:
+       return
+
     platformId = Platform.query.filter(Platform.name == senderPlatform).first().id
     senderUser = User.query.filter(User.external_id == senderId, User.platform_id == platformId).first()
-    user_id = senderUser.id
-    senderName = senderUser.name
+    recipients = getDestinationUsers(conversation)
+    if len(recipients) is not 0:
+        conversation_manager.log_message(senderUser.id, text, conversation.id, "text")
+        setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderUser.name, conversation.id, senderUser.id)
 
-    "recipients son todos los usuarios de nuestra plataforma en esa conversacion"
-    recipients = []
 
-    for user in conversation.users:
-        if user.platform_id == app.config.platformId:
-            recipients.append(user)
-
-    conversation_manager.log_message(user_id, text, conversationId, "text")
-    setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderName, conversationId, user_id)
+def getDestinationUsers(conversation):
+    return [user for user in (conversation.users if (len(conversation.users) is not 0) else (
+        conversation.group.users if (conversation.group is not None) else [])) if
+            user.platform_id == app.config.platformId]
 
 
 def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_id):

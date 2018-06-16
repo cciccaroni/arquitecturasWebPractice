@@ -51,16 +51,20 @@ class ConversationManager:
         else:
             return ConversationDTO(users_conversation[0], toUser.name)
 
-    def startGroupConversation(self, groupID):
+    def startGroupConversation(self, groupID, platform_id=1, external_id=1):
         group = Group.query.filter(Group.id == groupID).first()
         conversation = group.conversation
         if not conversation:
-            return self.createNewGroupConversation(group)
+            return self.createNewGroupConversation(group, platform_id=platform_id, external_id=external_id)
         else:
             return ConversationDTO(conversation, group.name)
 
-    def createNewGroupConversation(self, group):
-        conversation = Conversation(group=group)
+    def createNewGroupConversation(self, group, platform_id=None, external_id=None):
+        if platform_id is None:
+            platform_id = 1
+        if external_id is None:
+            external_id = 1
+        conversation = Conversation(group=group, platform_id=platform_id, external_id=external_id)
         db.session.add(conversation)
         db.session.flush()
         new_conversation = EmptyConversationDTO(conversation, group.name)
