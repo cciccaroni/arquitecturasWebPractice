@@ -54,9 +54,6 @@ def saveExternalConversation(id, name, platformName, type, users):
             fromUserId =  list(users[1].values())[0][0]
             toUserId =  list(users[0].values())[0][0]
 
-        "el from user lo tengo que buscar por external id y por platform id"
-        "el from user es el que coincide con el from platform"
-        "el to user lo busco por id"
 
         fromUser = User.query.filter(User.external_id == fromUserId, User.platform_id == fromPlatformId).first()
         toUser = User.query.filter(User.id == toUserId).first()
@@ -103,8 +100,8 @@ def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, se
     senderUser = User.query.filter(User.external_id == senderId, User.platform_id == platformId).first()
     recipients = getDestinationUsers(conversation)
     if len(recipients) is not 0:
-        conversation_manager.log_message(senderUser.id, text, conversation.id, "text")
         setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderUser.name, conversation.id, senderUser.id)
+        conversation_manager.log_message(senderUser.id, text, conversation.id, "text")
 
 
 def getDestinationUsers(conversation):

@@ -6,6 +6,7 @@ from app.mod_database import db
 from flask_login import login_user, logout_user, current_user
 import logging
 from flask_socketio import emit
+import grequests
 
 headers = {'content-type': 'application/json'}
 
@@ -40,7 +41,6 @@ def importAll():
           continue
         
         addUsers(platform)
-        deleteUsers(platform) 
     return
 
 
@@ -95,27 +95,10 @@ def addUsers(platform):
         addUser(user, platform)
     return
 
-
-def deleteUsers(platform):
-    # Borrar localmente todos los usuarios que ya no existen en sus plataforms
-    p = Platform.query.filter(Platform.name == platform['name']).first()
-    savedPlatformUsers = User.query.filter(User.platform_id == p.id).all()
-    ids = [element['id'] for element in platform['users']]
-    for user in savedPlatformUsers:
-        if user.external_id not in ids:
-            # TODO: borrar en cascada a las tablas donde figure el user_id
-            db.session.delete(user)
-            app.logger.debug('Deleting user: {}'.format(user))
-    db.session.commit()
-    return
-
-
 def exportUser(user):
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'user'
     jsonUser = {"id": user.id, "name": user.name, "token": app.config.appToken}
-    r = requests.post(url=endpoint, headers=headers,
-                      data=json.dumps(jsonUser), verify=False)
-    app.logger.debug('New user exported: {} :: {} :: {}'.format(jsonUser, endpoint, r))
+    grequests.map([grequests.post(endpoint, data=json.dumps(jsonUser), headers=headers, verify=False)])
     return
 
 
@@ -132,9 +115,7 @@ def exportConversation(conversationId, fromUser, toUser):
                               users
                           )
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'room'
-    r = requests.post(url=endpoint, headers=headers,
-                      data=json.dumps(room), verify=False)
-    app.logger.debug('Conversation exported {}::{}::{}'.format(room, endpoint, r))
+    grequests.map([grequests.post(endpoint, data=json.dumps(room), headers=headers, verify=False)])
     return
 
 def exportMessage(data):
@@ -157,9 +138,8 @@ def exportMessage(data):
     message = {"roomOriginalPlatform": originalRoomPlatform,
                "roomId": roomId, "senderId": senderId, "text": text, "token": token}
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'message'
-    r = requests.post(url=endpoint, headers=headers,
-                      data=json.dumps(message), verify=False)
-    app.logger.debug('Msg exported {}::{}::{}'.format(message, endpoint, r))
+
+    grequests.map([grequests.post(endpoint, data=json.dumps(message), headers=headers, verify=False)])
     return
 
 def createJsonRoom(id, name, type, users):
@@ -195,7 +175,6 @@ def exportGroup(group, conversation):
                       )
 
     endpoint = app.config['INTEGRATION_ENDPOINT'] + 'room'
-    r = requests.post(url=endpoint, headers=headers,
-                      data=json.dumps(room), verify=False)
-    app.logger.debug('Group exported {}::{}::{}'.format(room, endpoint, r))
+
+    grequests.map([grequests.post(endpoint, data=json.dumps(room), headers=headers, verify=False)])
     return
