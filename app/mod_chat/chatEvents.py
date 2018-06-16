@@ -6,7 +6,7 @@ import uuid
 from app import socketio
 from app import app
 from app.appModel.models import User, Conversation
-from app.mod_api.integrator import exportMessage
+from app.mod_api.exporter import exportMessage
 from app.mod_conversation.conversation_api import conversation_manager
 from app.constants import APPLICATION_PATH, APPLICATION_IMAGES_PATH, APPLICATION_AUDIOS_PATH
 

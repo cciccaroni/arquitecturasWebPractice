@@ -1,20 +1,9 @@
 from app.appModel.models import *
-from app.mod_api.integrator import importAll
+from app.mod_api.internalMessenger import sendMessageToInternalUsers
 from app.mod_conversation.conversation_api import conversation_manager
-from flask_socketio import join_room, emit, disconnect
 from app import socketio
 from app import app
 
-import functools
-
-
-
-def getUsersJson():
-    result = []
-    users = User.query.filter(User.platform_id == 1)
-    for user in users:
-        result.append({'id': user.id, 'name': user.name})
-    return result
 
 def saveExternalUser(id, name, platformName):
     users = User.query.all()
@@ -39,7 +28,6 @@ def saveExternalUser(id, name, platformName):
         platforms = Platform.query.all()
         app.logger.debug('Platform not found. {}-{}-{}'.format(id, name, platformName))
         app.logger.debug('Available platforms: {}'.format([p.name for p in platforms]))
-        importAll()
     return
 
 def saveExternalConversation(id, name, platformName, type, users):
@@ -100,28 +88,30 @@ def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, se
     senderUser = User.query.filter(User.external_id == senderId, User.platform_id == platformId).first()
     recipients = getDestinationUsers(conversation)
     if len(recipients) is not 0:
-        setupAndSendEvent(recipients, 'uiTextMessage', {'msg': text}, senderUser.name, conversation.id, senderUser.id)
+        sendMessageToInternalUsers(recipients, 'uiTextMessage', {'msg': text}, senderUser.name, conversation.id, senderUser.id)
         conversation_manager.log_message(senderUser.id, text, conversation.id, "text")
 
+
+def savePlatform(platform):
+    # chequear si la plataforma existe, sino agregarla con las keys
+    p = Platform.query.filter(Platform.name == platform['name']).first()
+
+    if p:
+        return p.id
+
+    newPlatform = Platform(
+        platform['name'],
+        'True' == platform['supportAudio'],
+        'True' == platform['supportImage']
+    )
+    db.session.add(newPlatform)
+    db.session.commit()
+    app.logger.debug('New platform added... {} - {}'.format(newPlatform.id, newPlatform.name))
+
+    return newPlatform.id
 
 def getDestinationUsers(conversation):
     return [user for user in (conversation.users if (len(conversation.users) is not 0) else (
         conversation.group.users if (conversation.group is not None) else [])) if
             user.platform_id == app.config.platformId]
-
-
-def setupAndSendEvent(recipients, eventName, data, sender, conversationId, user_id):
-    data['user_id'] = user_id
-    data['from'] = sender
-    data['conversationId'] = conversationId
-    group = Conversation.query.filter(Conversation.id == conversationId).first().group
-    if group:
-        data['group'] = group.name
-        data['group_id'] = group.id
-    sendEventToRecipients(recipients, data, eventName)
-
-def sendEventToRecipients(recipients, data, eventName):
-    for user in recipients:
-        if user.platform_id == app.config.platformId:
-           socketio.emit(eventName, data, room=user.id, namespace='/chat')
 

@@ -1,5 +1,5 @@
 from app.appModel.models import *
-from app.mod_api.integrator import exportConversation
+from app.mod_api.exporter import exportConversation
 from app import app
 
 class UserDTO:

@@ -31,7 +31,7 @@ app.logger.debug('Initializing app: {}'.format(args.name))
 login_manager.init_app(app)
 socketio.init_app(app)
 
-from app.mod_api.integrator import initializePlatform, importAll
+from app.mod_api.importer import initializePlatform, importAll
 initializePlatform()
 importAll()
 

@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request, abort
-from app.mod_api.integration_models import saveExternalUser, saveExternalConversation, saveAndSendMessageToInternalUsers, getUsersJson
+from app.mod_api.importsSaver import saveExternalUser, saveExternalConversation, saveAndSendMessageToInternalUsers
+from app.mod_api.exporter import exportUsers
+
 from app import socketio
 from app import app
 import logging
@@ -10,9 +12,7 @@ mod_api = Blueprint('api', __name__)
 
 @mod_api.route('/api/users', methods=['GET'])
 def getUsers():
-    users = getUsersJson()
-    app.logger.debug('Returning users.\n {}'.format(users))
-    return jsonify({'users': users})
+    return jsonify({'users': exportUsers()})
 
 @mod_api.route('/api/user', methods=['POST'])
 def new_user():
@@ -47,7 +47,6 @@ def new_message():
     senderId = request.json['senderId']
     senderPlatform = request.json['senderPlatform']
     text = request.json['text']
-    "guardar el mensaje en la base y forwardear. no anda la parte del forwardear"
     saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, senderPlatform, text);
     return "success"
 
