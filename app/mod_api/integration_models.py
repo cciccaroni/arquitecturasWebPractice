@@ -66,6 +66,27 @@ def saveExternalConversation(id, name, platformName, type, users):
         db.session.add(conversation)
         db.session.flush()
         db.session.commit()
+    elif type == "public":#"crear el grupo. Se asume que existen todos los usuarios.."
+        conversationUserList = []
+        for usersFromPlatform in users:
+            for platform in usersFromPlatform:
+                fromPlatformId = Platform.query.filter(Platform.name == platform).first().id
+                for userId in usersFromPlatform[platform]:
+                    if app.config.appName == platform:#id de usuario de mi app
+                        ownUser = User.query.filter(User.id == userId).first()
+                        conversationUserList.append(ownUser)
+                    else:#id de usuario externo
+                        externalUser = User.query.filter(User.external_id == userId, User.platform_id == fromPlatformId).first()
+                        conversationUserList.append(externalUser)
+        group = Group(name, conversationUserList)
+        db.session.add(group)
+        db.session.flush()
+        db.session.commit()
+        conversation = conversation_manager.startGroupConversation(group.id)
+
+
+
+
 
 def saveAndSendMessageToInternalUsers(roomOriginalPlatform, roomId, senderId, senderPlatform, text):
     roomOriginalPlatformId = Platform.query.filter(Platform.name == roomOriginalPlatform).first().id

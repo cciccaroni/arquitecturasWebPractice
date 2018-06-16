@@ -167,7 +167,7 @@ def createJsonRoom(id, name, type, users):
 
 
 
-def exportGroup(, conversation):
+def exportGroup(group, conversation):
     users = group.users
     platforms = Platform.query.all()
     groupUsers = []

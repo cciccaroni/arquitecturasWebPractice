@@ -35,7 +35,7 @@ def new_room():
     name =  request.json['name']
     platform = request.json['platform']
     type = request.json['type']
-    saveExternalConversation(id, name, platform, type, users);
+    saveExternalConversation(id, name, platform, type, users)
     return "success"
 
 @mod_api.route('/api/message', methods=['POST'])
