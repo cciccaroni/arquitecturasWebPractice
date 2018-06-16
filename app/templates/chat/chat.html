@@ -67,8 +67,10 @@
       </div>
       <div class="row justify-content-md-center">
         <div class="col-md-8">
-            <i class="mic material-icons" id="record" onclick="toggleRecording(this);">mic</i>
-            <i class="icono material-icons" id="imageIcon" onclick="$('#file').click()">photo</i>
+            {% if imageAndAudioAvailable %}
+                <i class="mic material-icons" id="record" onclick="toggleRecording(this);">mic</i>
+                <i class="icono material-icons" id="imageIcon" onclick="$('#file').click()">photo</i>
+            {% endif %}
             <input id="text" class="form-control" size="80" placeholder="Enter your message here">
         </div>
       </div>

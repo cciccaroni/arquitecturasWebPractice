@@ -15,14 +15,13 @@ mod_chat = Blueprint('chat', __name__, url_prefix='/chat', template_folder='../t
 def chatWithUser(user_id):
     fromUser = session['user_id']
     toUser = user_id
-
     conversation = conversation_manager.startConversation(fromUser, toUser)
-
     return render_template("chat.html",
                            chatTitle=conversation.title,
                            actual_user=current_user,
                            recipientsList=conversation.recipientList,
-                           conversation=conversation)
+                           conversation=conversation,
+                           imageAndAudioAvailable=not any(User.query.filter(User.id == userdto.id).first().external_id != 1 for userdto in conversation.recipientList))
 
 
 # TODO
@@ -36,5 +35,6 @@ def chatWithGroup(group_id):
                            chatTitle=conversation.title,
                            actual_user=current_user,
                            recipientsList=conversation.recipientList,
-                           conversation=conversation)
+                           conversation=conversation,
+                           imageAndAudioAvailable=not any(User.query.filter(User.id == userdto.id).first().external_id != 1 for userdto in conversation.recipientList))
 
