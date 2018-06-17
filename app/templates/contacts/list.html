@@ -45,12 +45,12 @@
 <div class="background">
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active top-padding" id="usuarios">
-            <div class="container-fluid" style="overflow: auto">
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-3">
                     </div>
                     <div class="col-md-6 no-padding">
-                        <ul id="contactList" class="list-group  no-margin-bottom">
+                        <ul id="contactList" class="list-group  no-margin-bottom" style="overflow: auto; max-height: 500px">
                             {% for user in users %}
                             <a user id="user_{{user.id}}" user_id="{{user.id}}" class="item list-group-item border_item">
                                 <span unread_count="0" class="badge badge-primary badge-pill"></span>
