@@ -21,7 +21,12 @@ def chatWithUser(user_id):
                            actual_user=current_user,
                            recipientsList=conversation.recipientList,
                            conversation=conversation,
-                           imageAndAudioAvailable=not any(User.query.filter(User.id == userdto.id).first().external_id != 1 for userdto in conversation.recipientList))
+                           imageAndAudioAvailable=not thereIsExternalUserIn(conversation))
+
+
+def thereIsExternalUserIn(conversation):
+    return any(
+        User.query.filter(User.id == userdto.id).first().platform_id != 1 for userdto in conversation.recipientList)
 
 
 # TODO
@@ -36,5 +41,5 @@ def chatWithGroup(group_id):
                            actual_user=current_user,
                            recipientsList=conversation.recipientList,
                            conversation=conversation,
-                           imageAndAudioAvailable=not any(User.query.filter(User.id == userdto.id).first().external_id != 1 for userdto in conversation.recipientList))
+                           imageAndAudioAvailable=not thereIsExternalUserIn(conversation))
 
