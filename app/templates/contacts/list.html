@@ -52,7 +52,7 @@
                     <div class="col-md-6 no-padding">
                         <ul id="contactList" class="list-group  no-margin-bottom" style="overflow: auto; max-height: 500px">
                             {% for user in users %}
-                            <a user id="user_{{user.id}}" user_id="{{user.id}}" class="item list-group-item border_item">
+                            <a user id="user_{{user.id}}" user_id="{{user.id}}" class="item list-group-item border_item" title="{{user.platformName}}">
                                 <span unread_count="0" class="badge badge-primary badge-pill"></span>
                                 <h4 name class="list-group-item-heading">{{user.name}}</h4>
                                 <p last_received class="list-group-item-text"></p>

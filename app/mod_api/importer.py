@@ -18,7 +18,8 @@ def saveExternalUser(id, name, platformName):
         app.logger.debug('Saved as external {}-{}'.format(_user, platformName))
         newUser = {
           'id':_user.id,
-          'name': _user.name
+          'name': _user.name,
+          'platformName': platformName
         }
         for user in users:
             if user.platform_id == app.config.platformId:

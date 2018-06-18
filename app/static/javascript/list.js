@@ -25,7 +25,7 @@ function initializeSocket(){
     socket.on('newUser', function(data) {
       const elementId = "user_" + data.id;
       let newUser = `
-        <a user id="${elementId}" user_id="${data.id}" class="item list-group-item border_item">
+        <a user id="${elementId}" user_id="${data.id}" class="item list-group-item border_item" title="${data.platformName}">
             <span unread_count="0" class="badge badge-primary badge-pill"></span>
             <h4 name class="list-group-item-heading">${data.name}</h4>
             <p last_received class="list-group-item-text"></p>
