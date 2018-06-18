@@ -42,7 +42,7 @@ class User(db.Model):
         back_populates='users')
     platform_id = db.Column(db.Integer, db.ForeignKey('platform.id'), default=1)
 
-    external_id = db.Column(db.Integer, default=1)
+    external_id = db.Column(db.String(128), default=1)
 
     groups = db.relationship('Group', secondary=user_group, lazy='subquery',
                              back_populates='users')
