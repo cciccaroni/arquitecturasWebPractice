@@ -6,7 +6,7 @@ from flask import Blueprint, request, render_template, \
 import hashlib
 
 # Import module forms
-from app.mod_api.exporter import exportUser
+from app.mod_integrator.exporter import exportUser
 from app.mod_auth.forms import LoginForm, SignUpForm
 from app import socketio
 from app import app

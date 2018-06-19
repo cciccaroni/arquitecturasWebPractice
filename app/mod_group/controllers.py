@@ -5,7 +5,7 @@ from app import db, app
 from app.appModel.models import User, Group
 from flask_login import login_required, current_user
 
-from app.mod_api.exporter import exportGroup
+from app.mod_integrator.exporter import exportGroup
 from app.mod_conversation.conversation_api import conversation_manager
 #to decode form data
 import unicodedata

@@ -1,5 +1,5 @@
 from app.appModel.models import *
-from app.mod_api.internalMessenger import sendMessageToInternalUsers
+from app.mod_integrator.internalMessenger import sendMessageToInternalUsers
 from app.mod_conversation.conversation_api import conversation_manager
 from app import socketio
 from app import app

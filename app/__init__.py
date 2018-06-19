@@ -43,7 +43,7 @@ from app.mod_auth.controllers import mod_auth as auth_module
 from app.mod_list.controllers import mod_list
 from app.mod_chat.controllers import mod_chat
 from app.mod_group.controllers import mod_group
-from app.mod_api.controllers import mod_api
+from app.mod_integrator.controllers import mod_api
 # Register blueprint(s)
 app.register_blueprint(auth_module)
 app.register_blueprint(mod_list)

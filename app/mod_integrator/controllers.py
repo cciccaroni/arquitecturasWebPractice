@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, abort
-from app.mod_api.importer import saveExternalUser, saveExternalConversation, saveAndSendMessageToInternalUsers
-from app.mod_api.exporter import exportUsers
+from app.mod_integrator.importer import saveExternalUser, saveExternalConversation, saveAndSendMessageToInternalUsers
+from app.mod_integrator.exporter import exportUsers
 
 from app import socketio
 from app import app
